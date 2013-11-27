@@ -22,9 +22,11 @@ namespace poker
     /// Image cards source http://www.google.se/imgres?imgurl=http://www.jfitz.com/cards/windows-playing-cards.png&imgrefurl=http://www.jfitz.com/cards/&usg=__2iWarkU2fscs1WHtG0XPh1YtDK0=&h=394&w=951&sz=20&hl=en&start=1&sig2=Xd1BfVoIcygWrCa0-6RkaQ&zoom=1&tbnid=WL2BNarcVaEn9M:&tbnh=61&tbnw=148&ei=j06KUu_CM-Wk4gTxvoHAAQ&itbs=1&sa=X&ved=
     public partial class Play : Page
     {
+        Game game;
+
         public Play()
         {
-            Game game = new Game();
+            game = new Game();
             game.newGame();
             DataContext = game;
             InitializeComponent();
@@ -33,8 +35,38 @@ namespace poker
         private void selectCard(object sender, RoutedEventArgs e)
         {
             Button b = (Button)sender;
-            char c = b.Tag.ToString().Last();
-            MessageBox.Show(c.ToString());
+            char last = b.Tag.ToString().Last();
+            int cardNumber = (int)last - '0';
+
+            if (game.subsFinished())
+            {
+
+                Button source = e.Source as Button;
+                if (source != null)
+                {
+                    source.Visibility = Visibility.Hidden;
+                }
+            }
+            else
+            {
+                
+                game.markCardForsub(cardNumber);
+            }
         }
+
+        private void pressSubBtn(object sender, RoutedEventArgs e)
+        {
+            game.doSub();
+            
+            if(game.subsFinished())
+            {
+                Button source = e.Source as Button;
+                if (source != null)
+                {
+                    source.Visibility = Visibility.Hidden;
+                }
+            }
+        }
+
     }
 }

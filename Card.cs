@@ -8,6 +8,8 @@ using System.Diagnostics;
 
 namespace poker
 {
+    //enum suit
+
     class Card
     {
         private string  suit;
