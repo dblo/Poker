@@ -8,15 +8,45 @@ namespace poker
 {
     class Deck
     {
-        private Card[] drawnCards;
-        private Stack<Card> notDrawnCards;
-        private int drawCounter;
+        private Card[] cards;
+        private int top;
 
-        public Card draw() {
-            Card drawn = notDrawnCards.Pop();
-            drawnCards[drawCounter] = drawn;
-            drawCounter++;
-            return drawn;
+        public Deck()
+        {
+            cards = new Card[52];
+            top = 0;
+
+            int i = 0;
+            string[] suits = { "hearts", "spades", "diamonds", "clubs" };
+            foreach (string suit in suits)
+                for (int j = 1; j < 14; j++)
+                {
+                    cards[i] = new Card(suit, j);
+                    i++;
+                }
+        }
+
+        // Returns 1 card
+        public Card draw()
+        {
+            Card topCard = cards[top];
+            top++;
+            return topCard; 
+        }
+
+        public void shuffle()
+        {
+            Random rng = new Random();
+            Card tmp;
+            for (int i=0; i < 1000; i++)
+            {
+                int swap1 = rng.Next(0, 51),
+                    swap2 = rng.Next(0, 51);
+                 tmp = cards[swap1];
+                 cards[swap1] = cards[swap2];
+                 cards[swap2] = tmp;
+            }
+            top = 0;
         }
     }
 }

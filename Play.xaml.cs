@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Globalization;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -23,9 +24,17 @@ namespace poker
     {
         public Play()
         {
+            Game game = new Game();
+            game.newGame();
+            DataContext = game;
             InitializeComponent();
-            
-            
+        }
+
+        private void selectCard(object sender, RoutedEventArgs e)
+        {
+            Button b = (Button)sender;
+            char c = b.Tag.ToString().Last();
+            MessageBox.Show(c.ToString());
         }
     }
 }
