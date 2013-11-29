@@ -44,12 +44,12 @@ namespace poker
                 Button source = e.Source as Button;
                 if (source != null)
                 {
+                    game.playCard(cardNumber);
                     source.Visibility = Visibility.Hidden;
                 }
             }
             else
             {
-                
                 game.markCardForsub(cardNumber);
             }
         }
@@ -58,13 +58,12 @@ namespace poker
         {
             game.doSub();
             
+            // Hide sub button if sub rounds are done
             if(game.subsFinished())
             {
                 Button source = e.Source as Button;
                 if (source != null)
-                {
                     source.Visibility = Visibility.Hidden;
-                }
             }
         }
 
