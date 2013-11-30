@@ -36,6 +36,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -93,6 +94,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -102,6 +104,375 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Properties\Modern\c01.png" />
+    <Resource Include="Properties\Modern\c02.png" />
+    <Resource Include="Properties\Modern\c03.png" />
+    <Resource Include="Properties\Modern\c04.png" />
+    <Resource Include="Properties\Modern\c05.png" />
+    <Resource Include="Properties\Modern\c06.png" />
+    <Resource Include="Properties\Modern\c07.png" />
+    <Resource Include="Properties\Modern\c08.png" />
+    <Resource Include="Properties\Modern\c09.png" />
+    <Resource Include="Properties\Modern\c10.png" />
+    <Resource Include="Properties\Modern\c11.png" />
+    <Resource Include="Properties\Modern\c12.png" />
+    <Resource Include="Properties\Modern\c13.png" />
+    <Resource Include="Properties\Modern\d01.png" />
+    <Resource Include="Properties\Modern\d02.png" />
+    <Resource Include="Properties\Modern\d03.png" />
+    <Resource Include="Properties\Modern\d04.png" />
+    <Resource Include="Properties\Modern\d05.png" />
+    <Resource Include="Properties\Modern\d06.png" />
+    <Resource Include="Properties\Modern\d07.png" />
+    <Resource Include="Properties\Modern\d08.png" />
+    <Resource Include="Properties\Modern\d09.png" />
+    <Resource Include="Properties\Modern\d10.png" />
+    <Resource Include="Properties\Modern\d11.png" />
+    <Resource Include="Properties\Modern\d12.png" />
+    <Resource Include="Properties\Modern\d13.png" />
+    <Resource Include="Properties\Modern\h01.png" />
+    <Resource Include="Properties\Modern\h02.png" />
+    <Resource Include="Properties\Modern\h03.png" />
+    <Resource Include="Properties\Modern\h04.png" />
+    <Resource Include="Properties\Modern\h05.png" />
+    <Resource Include="Properties\Modern\h06.png" />
+    <Resource Include="Properties\Modern\h07.png" />
+    <Resource Include="Properties\Modern\h08.png" />
+    <Resource Include="Properties\Modern\h09.png" />
+    <Resource Include="Properties\Modern\h10.png" />
+    <Resource Include="Properties\Modern\h11.png" />
+    <Resource Include="Properties\Modern\h12.png" />
+    <Resource Include="Properties\Modern\h13.png" />
+    <Resource Include="Properties\Modern\s01.png" />
+    <Resource Include="Properties\Modern\s02.png" />
+    <Resource Include="Properties\Modern\s03.png" />
+    <Resource Include="Properties\Modern\s04.png" />
+    <Resource Include="Properties\Modern\s05.png" />
+    <Resource Include="Properties\Modern\s06.png" />
+    <Resource Include="Properties\Modern\s07.png" />
+    <Resource Include="Properties\Modern\s08.png" />
+    <Resource Include="Properties\Modern\s09.png" />
+    <Resource Include="Properties\Modern\s10.png" />
+    <Resource Include="Properties\Modern\s11.png" />
+    <Resource Include="Properties\Modern\s12.png" />
+    <Resource Include="Properties\Modern\s13.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\c2.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\c01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\c02.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\c03.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\c04.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\c05.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\c06.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\c07.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\c08.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\c09.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\c10.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\c11.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\c12.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\c13.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\d01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\d02.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\d03.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\d04.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\d05.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\d06.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\d07.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\d08.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\d09.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\d10.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\d11.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\d12.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\d13.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\h01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\h02.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\h03.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\h04.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\h05.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\h06.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\h07.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\h08.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\h09.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\h10.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\h11.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\h12.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\h13.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\s01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\s02.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\s03.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\s04.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\s05.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\s06.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\s07.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\s08.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\s09.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\s10.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\s11.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\s12.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Modern\s13.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\c11.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\c12.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\c13.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\d01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\d02.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\d03.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\d04.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\d05.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\d06.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\d07.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\d08.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\d09.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\d10.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\d11.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\d12.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\d13.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\h01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\h02.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\h03.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\h04.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\h05.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\h06.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\h07.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\h08.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\h09.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\h10.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\h11.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\h12.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\h13.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\s01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\s02.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\s03.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\s04.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\s05.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\s06.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\s07.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\s08.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\s09.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\s10.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\s11.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\s12.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\s13.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\c01.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\c02.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\c03.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\c04.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\c05.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\c06.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\c07.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\c08.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\c09.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Media\c10.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

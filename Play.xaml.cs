@@ -28,20 +28,19 @@ namespace poker
         {
             game = new Game();
             game.newGame();
-            DataContext = game;
             InitializeComponent();
+            DataContext = game;
         }
 
         private void selectCard(object sender, RoutedEventArgs e)
         {
-            Button b = (Button)sender;
+            Image b = (Image)sender;
             char last = b.Tag.ToString().Last();
             int cardNumber = (int)last - '0';
 
             if (game.subsFinished())
             {
-
-                Button source = e.Source as Button;
+                Image source = e.Source as Image;
                 if (source != null)
                 {
                     game.playCard(cardNumber);
@@ -51,6 +50,7 @@ namespace poker
             else
             {
                 game.markCardForsub(cardNumber);
+                //b.Opacity = 0.5; //todo
             }
         }
 
@@ -66,6 +66,5 @@ namespace poker
                     source.Visibility = Visibility.Hidden;
             }
         }
-
     }
 }

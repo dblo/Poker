@@ -6,37 +6,38 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.IO;
 
 namespace poker
 {
     class Game : INotifyPropertyChanged
     {
-        const int CARDS_PER_HAND = 5,
+        readonly int CARDS_PER_HAND = 5,
                   ALLOWED_SUBST = 2;
-
+        readonly string[] suitsArray = {"h", "s", "d", "c"};
         Deck deck;
         Card[] player1, player2;
         Queue<int> cardsToSub;
         int subRound,
             p1_played_index,
             p1_score,
-            p2_score,
-            whoseTurn;
-        BitmapImage sprites;
+            p2_score;
+        BitmapImage[] cardImages;
 
         public Game()
         {
-            deck    = new Deck();
+            deck = new Deck();
             player1 = new Card[CARDS_PER_HAND];
             player2 = new Card[CARDS_PER_HAND];
             cardsToSub = new Queue<int>();
+            cardImages = new BitmapImage[52];
             loadImages();
         }
 
         public void newGame()
         {
             deck.shuffle();
-            for(int i=0; i < CARDS_PER_HAND; i++)
+            for (int i = 0; i < CARDS_PER_HAND; i++)
             {
                 player1[i] = deck.draw();
                 player2[i] = deck.draw();
@@ -48,22 +49,40 @@ namespace poker
 
         public void loadImages()
         {
-//            Uri src = new Uri("cards.png", UriKind.Relative);
-//            Uri src = new Uri("C:\Users\First\Documents\Visual Studio 2013\Projects\poker\poker\cards.png", UriKind.Absolute);
-
-//            sprites = new BitmapImage(src);
+            string mediaPath = "C:/Users/First/Documents/Visual Studio 2013/Projects/poker/poker/Media/"; //todo
+            for (int i = 0; i < 52; i++ )
+            {
+                Card card = deck.getCardByIndex(i);
+                cardImages[i] = new BitmapImage(new Uri(mediaPath + card.toString() + ".png"));
+            }
         }
 
-        public ImageSource Test
+        private BitmapImage getImage(Card card)
         {
-            get { return sprites; }
-        }
+            int suitOffset = 0;
+            switch(card.getSuit())
+            {
+                //case 'h':
+                //    suitOffset = 0;
+                //    break;
 
-        public int getWhoseTurn()
-        {
-            return whoseTurn;
-        }
+                case "s":
+                suitOffset = 13;
+                break;
 
+                case "d":
+                suitOffset = 26;
+                break;
+
+                case "c":
+                    suitOffset = 39;
+                    break;
+            }
+
+            suitOffset += card.getNumber() - 1;
+            return cardImages[suitOffset];
+        }
+        
         public void markCardForsub(int cardNum)
         {
             cardsToSub.Enqueue(cardNum);
@@ -102,7 +121,7 @@ namespace poker
             foreach (Card c in player1)
                 System.Diagnostics.Debug.Print(c.toString());
         }
-        
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name)
         {
@@ -112,7 +131,7 @@ namespace poker
                 handler(this, new PropertyChangedEventArgs(name));
             }
         }
-        
+
         public String P1_Played
         {
             get
@@ -135,82 +154,82 @@ namespace poker
             get { return p2_score; }
             set { p2_score = value; OnPropertyChanged("P2_Score"); }
         }
-        
-        public String P1_Card1
+
+        public BitmapImage P1_Card1
         {
-            get { return player1[0].toString(); }
+            get { return getImage(player1[0]); }
             //set
             //{
             //    OnPropertyChanged("Card1");
             //}
         }
-        public String P1_Card2
+        public BitmapImage P1_Card2
         {
-            get { return player1[1].toString(); }
+            get { return getImage(player1[1]); }
             //set
             //{
             //    OnPropertyChanged("Card2");
             //}
         }
-        public String P1_Card3
+        public BitmapImage P1_Card3
         {
-            get { return player1[2].toString(); }
+            get { return getImage(player1[2]); }
             //set
             //{
             //    OnPropertyChanged("Card3");
             //}
         }
-        public String P1_Card4
+        public BitmapImage P1_Card4
         {
-            get { return player1[3].toString(); }
+            get { return getImage(player1[3]); }
             //set
             //{
             //    OnPropertyChanged("Card4");
             //}
         }
-        public String P1_Card5
+        public BitmapImage P1_Card5
         {
-            get { return player1[4].toString(); }
+            get { return getImage(player1[4]); }
             //set
             //{
             //    OnPropertyChanged("Card5");
             //}
         }
-        public String P2_Card1
+        public BitmapImage P2_Card1
         {
-            get { return player2[0].toString(); }
+            get { return getImage(player2[0]); }
             //set
             //{
             //    OnPropertyChanged("Card1");
             //}
         }
-        public String P2_Card2
+        public BitmapImage P2_Card2
         {
-            get { return player2[1].toString(); }
+            get { return getImage(player2[1]); }
             //set
             //{
             //    OnPropertyChanged("Card2");
             //}
         }
-        public String P2_Card3
+        public BitmapImage P2_Card3
         {
-            get { return player2[2].toString(); }
+            get { return getImage(player2[2]); }
             //set
             //{
             //    OnPropertyChanged("Card3");
             //}
         }
-        public String P2_Card4
+        public BitmapImage P2_Card4
         {
-            get { return player2[3].toString(); }
+            get { return getImage(player2[3]); }
             //set
             //{
             //    OnPropertyChanged("Card4");
             //}
         }
-        public String P2_Card5
+        public BitmapImage P2_Card5
         {
-            get { return player2[4].toString(); }
+            get { return getImage(player2[4]); }
             //set
             //{
             //    OnPropertyChanged("Card5");

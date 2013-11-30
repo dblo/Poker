@@ -12,8 +12,8 @@ namespace poker
 
     class Card
     {
-        private string  suit;
-        private int     number;
+        private string suit;
+        private int  number;
 
         public Card(string _suit, int _number)
         {

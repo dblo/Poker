@@ -1,5 +1,5 @@
 ﻿<NavigationWindow x:Class="poker.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="700" Width="700" Source="Play.xaml">
+        Title="MainWindow" Height="490" Width="520" Source="Play.xaml">
 </NavigationWindow>

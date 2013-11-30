@@ -15,15 +15,20 @@ namespace poker
         {
             cards = new Card[52];
             top = 0;
-
+            
+            string[] suits = {"h", "s", "d", "c"};
             int i = 0;
-            string[] suits = { "hearts", "spades", "diamonds", "clubs" };
             foreach (string suit in suits)
                 for (int j = 1; j < 14; j++)
                 {
                     cards[i] = new Card(suit, j);
                     i++;
                 }
+        }
+
+        public Card getCardByIndex(int index)
+        {
+            return cards[index];
         }
 
         // Returns 1 card
