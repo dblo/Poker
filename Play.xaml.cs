@@ -19,7 +19,6 @@ namespace poker
     /// <summary>
     /// Interaction logic for Play.xaml
     /// </summary>
-    /// Image cards source http://www.google.se/imgres?imgurl=http://www.jfitz.com/cards/windows-playing-cards.png&imgrefurl=http://www.jfitz.com/cards/&usg=__2iWarkU2fscs1WHtG0XPh1YtDK0=&h=394&w=951&sz=20&hl=en&start=1&sig2=Xd1BfVoIcygWrCa0-6RkaQ&zoom=1&tbnid=WL2BNarcVaEn9M:&tbnh=61&tbnw=148&ei=j06KUu_CM-Wk4gTxvoHAAQ&itbs=1&sa=X&ved=
     public partial class Play : Page
     {
         Game game;
@@ -39,20 +38,29 @@ namespace poker
             char last = b.Tag.ToString().Last();
             int cardNumber = (int)last - '0';
 
-            if (!game.subsFinished())
-            //{
-                //Image source = e.Source as Image;
-                //if (source != null)
-                //{
-                //    game.playCard(cardNumber);
-                //    source.Visibility = Visibility.Hidden;
-                //}
-            //}
-            //else
-            //{
+            if (game.subsFinished())
+            {
+                Image playedCardImg = e.Source as Image;
+                if (playedCardImg != null)
+                {
+                    game.playCard(cardNumber);
+                    playedCardImg.Visibility = Visibility.Hidden;
+
+                    playedCardImg = FindName("p2card" + game.getP2Played().ToString()) as Image;
+                    playedCardImg.Visibility = Visibility.Hidden;
+
+                    playedCardImg = FindName("p3card" + game.getP3Played().ToString()) as Image;
+                    playedCardImg.Visibility = Visibility.Hidden;
+
+                    playedCardImg = FindName("p4card" + game.getP4Played().ToString()) as Image;
+                    playedCardImg.Visibility = Visibility.Hidden;
+                }
+            }
+            else
+            {
                 game.markCardForsub(cardNumber);
             //b.Opacity = 0.5; //todo
-            //}
+            }
         }
 
         private void pressSubBtn(object sender, RoutedEventArgs e)

@@ -20,7 +20,11 @@ namespace poker
         Queue<int> cardsToSub;
         int subRound,
             p1_score,
-            p2_score;
+            p2_score,
+            p1Played,
+            p2Played,
+            p3Played,
+            p4Played;
         BitmapImage[] cardImages;
 
         public Game()
@@ -47,6 +51,7 @@ namespace poker
             }
             subRound = 1;
             p1_score = p2_score = 0;
+            p1Played = p2Played = p3Played = p4Played = -1;
         }
 
         public void loadImages()
@@ -131,11 +136,35 @@ namespace poker
             return subRound > ALLOWED_SUBST;
         }
 
-        //public void playCard(int cardNum)
-        //{
-        //    p1_played_index = cardNum - 1;
-        //    OnPropertyChanged("P1_Played");
-        //}
+        public void playCard(int cardNum)
+        {
+            p1Played = cardNum - 1;
+            OnPropertyChanged("P1_Played");
+
+            p2Played++;
+            OnPropertyChanged("P2_Played");
+
+            p3Played++;
+            OnPropertyChanged("P3_Played");
+
+            p4Played++;
+            OnPropertyChanged("P4_Played");
+        }
+
+        public int getP2Played()
+        {
+            return p2Played+1;
+        }
+
+        public int getP3Played()
+        {
+            return p3Played+1;
+        }
+
+        public int getP4Played()
+        {
+            return p4Played+1;
+        }
 
         // Debug util
         private void printHandToDebug()
@@ -154,17 +183,44 @@ namespace poker
             }
         }
 
-        //public String P1_Played
-        //{
-        //    get
-        //    {
-        //        if (p1_played_index >= 0)
-        //            return player1[p1_played_index].toString();
-        //        else
-        //            return "";
-        //    }
-        //}
+        public BitmapImage P1_Played
+        {
+            get
+            {
+                if (p1Played >= 0)
+                    return getImage(player1[p1Played]);
+                return null;
+            }
+        }
 
+        public BitmapImage P2_Played
+        {
+            get
+            {
+                if (p2Played >= 0)
+                    return getImage(player2[p2Played]);
+                return null;
+            }
+        }
+        public BitmapImage P3_Played
+        {
+            get
+            {
+                if (p3Played >= 0)
+                    return getImage(player3[p3Played]);
+                return null;
+            }
+        }
+
+        public BitmapImage P4_Played
+        {
+            get
+            {
+                if (p4Played >= 0)
+                    return getImage(player4[p4Played]);
+                return null;
+            }
+        }
         public int P1_Score
         {
             get { return p1_score; }
