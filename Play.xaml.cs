@@ -29,6 +29,7 @@ namespace poker
             game = new Game();
             game.newGame();
             InitializeComponent();
+            RenderOptions.SetBitmapScalingMode(this, BitmapScalingMode.Fant);
             DataContext = game;
         }
 
@@ -38,20 +39,20 @@ namespace poker
             char last = b.Tag.ToString().Last();
             int cardNumber = (int)last - '0';
 
-            if (game.subsFinished())
-            {
-                Image source = e.Source as Image;
-                if (source != null)
-                {
-                    game.playCard(cardNumber);
-                    source.Visibility = Visibility.Hidden;
-                }
-            }
-            else
-            {
+            if (!game.subsFinished())
+            //{
+                //Image source = e.Source as Image;
+                //if (source != null)
+                //{
+                //    game.playCard(cardNumber);
+                //    source.Visibility = Visibility.Hidden;
+                //}
+            //}
+            //else
+            //{
                 game.markCardForsub(cardNumber);
-                //b.Opacity = 0.5; //todo
-            }
+            //b.Opacity = 0.5; //todo
+            //}
         }
 
         private void pressSubBtn(object sender, RoutedEventArgs e)

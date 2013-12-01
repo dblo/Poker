@@ -109,11 +109,11 @@ namespace poker
             return subRound > ALLOWED_SUBST;
         }
 
-        public void playCard(int cardNum)
-        {
-            p1_played_index = cardNum - 1;
-            OnPropertyChanged("P1_Played");
-        }
+        //public void playCard(int cardNum)
+        //{
+        //    p1_played_index = cardNum - 1;
+        //    OnPropertyChanged("P1_Played");
+        //}
 
         // Debug util
         private void printHandToDebug()
@@ -132,16 +132,16 @@ namespace poker
             }
         }
 
-        public String P1_Played
-        {
-            get
-            {
-                if (p1_played_index >= 0)
-                    return player1[p1_played_index].toString();
-                else
-                    return "";
-            }
-        }
+        //public String P1_Played
+        //{
+        //    get
+        //    {
+        //        if (p1_played_index >= 0)
+        //            return player1[p1_played_index].toString();
+        //        else
+        //            return "";
+        //    }
+        //}
 
         public int P1_Score
         {

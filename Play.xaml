@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
       d:DesignHeight="420" d:DesignWidth="500"
+      ShowsNavigationUI="False"
 	Title="Play">
 
     <Page.Resources>
@@ -79,7 +80,7 @@
                 Grid.Row="6"
                 Margin="5,5,5,5">
             Sub</Button>
-
+<!--
         <TextBlock Grid.Column="3"
                    Grid.Row="4"
                    Tag="p1_played"
@@ -89,7 +90,7 @@
                    Grid.Row="2"
                    Tag="p1_played"
                    Text="{Binding P2_Played}" />
-
+-->
         <Image Grid.Column="1"
                    Grid.Row="0"
                    Tag="p1_played"
@@ -117,10 +118,14 @@
 
         <TextBlock Grid.Column="0"
                    Grid.Row="6"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
                    Text="{Binding P1_Score}" />
 
         <TextBlock Grid.Column="6"
                    Grid.Row="0"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
                    Text="{Binding P2_Score}" />
         
         <Ellipse Grid.Column="3"
