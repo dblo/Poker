@@ -34,16 +34,17 @@ namespace poker
 
         private void selectCard(object sender, RoutedEventArgs e)
         {
-            Image b = (Image)sender;
-            char last = b.Tag.ToString().Last();
-            int cardNumber = (int)last - '0';
-
-            if (game.subsFinished())
+            if (!game.roundOver())
             {
-                Image playedCardImg = e.Source as Image;
-                if (playedCardImg != null)
+                Image b = (Image)sender;
+                char last = b.Tag.ToString().Last();
+                int cardNumber = (int)last - '0';
+
+                if (game.subsFinished())
                 {
+                    Image playedCardImg;
                     game.playCard(cardNumber);
+                    playedCardImg = FindName("p1card" + cardNumber.ToString()) as Image;
                     playedCardImg.Visibility = Visibility.Hidden;
 
                     playedCardImg = FindName("p2card" + game.getP2Played().ToString()) as Image;
@@ -54,12 +55,26 @@ namespace poker
 
                     playedCardImg = FindName("p4card" + game.getP4Played().ToString()) as Image;
                     playedCardImg.Visibility = Visibility.Hidden;
+
+                    if (game.roundOver())
+                    {
+                        for (int i = 1; i < 5; i++)
+                            for (int j = 1; j <= 5; j++)
+                            {
+                                playedCardImg = FindName("p" + i.ToString() + "card" + j.ToString()) as Image;
+                                playedCardImg.Visibility = Visibility.Visible;
+                            }
+
+                        Button btn = FindName("controlBtn") as Button;
+                        btn.Content = "Next";
+                        btn.Visibility = Visibility.Visible;
+                    }
                 }
-            }
-            else
-            {
-                game.markCardForsub(cardNumber);
-            //b.Opacity = 0.5; //todo
+                else
+                {
+                    game.markCardForsub(cardNumber);
+                    //b.Opacity = 0.5; //todo
+                }
             }
         }
 
@@ -68,12 +83,20 @@ namespace poker
             game.doSub();
 
             // Hide sub button if sub rounds are done
-            if(game.subsFinished())
+            if (game.subsFinished())
             {
-                Button source = e.Source as Button;
-                if (source != null)
-                    source.Visibility = Visibility.Hidden;
+                Button btn = e.Source as Button;
+                if (btn != null)
+                    btn.Visibility = Visibility.Hidden;
+
+                if (game.roundOver())
+                {
+                    game.newRound();
+                    btn.Content = "Sub";
+                    btn.Visibility = Visibility.Visible;
+                }
             }
         }
     }
 }
+
