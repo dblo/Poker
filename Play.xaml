@@ -4,8 +4,9 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       mc:Ignorable="d" 
-      d:DesignHeight="420" d:DesignWidth="500"
+      d:DesignHeight="800" d:DesignWidth="600"
       ShowsNavigationUI="False"
+      Background="Green"
 	Title="Play">
 
     <Page.Resources>
@@ -14,10 +15,13 @@
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
         </Style>
+        <Style x:Key="CardStyle" TargetType="Image">
+            <Setter Property="Width" Value="70" />
+            <Setter Property="Height" Value="95" />
+        </Style>
     </Page.Resources>
 
-    <Grid VerticalAlignment="Bottom"
-        Height="420"
+    <Grid Height="700"
         Width="500"
         Margin="0,0,0,0"
         Background="Green">
@@ -45,6 +49,7 @@
                Focusable="True"
                Tag="P1_Card1"
                MouseUp="selectCard"
+               Style="{StaticResource CardStyle}"
                Source="{Binding P1_Card1}" />
 
         <Image Grid.Column="2"
@@ -52,6 +57,7 @@
                Focusable="True"
                Tag="P1_Card2"
                MouseUp="selectCard"
+               Style="{StaticResource CardStyle}"
                Source="{Binding P1_Card2}" />
 
         <Image Grid.Column="3"
@@ -59,6 +65,7 @@
                Focusable="True"
                Tag="P1_Card3"
                MouseUp="selectCard"
+               Style="{StaticResource CardStyle}"
                Source="{Binding P1_Card3}" />
 
         <Image Grid.Column="4"
@@ -66,6 +73,7 @@
                Focusable="True"
                Tag="P1_Card4"
                MouseUp="selectCard"
+               Style="{StaticResource CardStyle}"
                Source="{Binding P1_Card4}" />
 
         <Image Grid.Column="5"
@@ -73,11 +81,13 @@
                Focusable="True"
                Tag="P1_Card5"
                MouseUp="selectCard"
+               Style="{StaticResource CardStyle}"
                Source="{Binding P1_Card5}" />
 
         <Button Click="pressSubBtn"
                 Grid.Column="6"
                 Grid.Row="6"
+                Height="50"
                 Margin="5,5,5,5">
             Sub</Button>
 <!--
@@ -92,30 +102,80 @@
                    Text="{Binding P2_Played}" />
 -->
         <Image Grid.Column="1"
-                   Grid.Row="0"
-                   Tag="p1_played"
-                   Source="{Binding P2_Card1}" />
+               Grid.Row="0"
+               Style="{StaticResource CardStyle}"
+               Source="{Binding P2_Card1}"/>
 
         <Image Grid.Column="2"
-                   Grid.Row="0"
-                   Tag="p1_played"
-                   Source="{Binding P2_Card2}" />
+               Grid.Row="0"
+               Style="{StaticResource CardStyle}"
+               Source="{Binding P2_Card2}" />
 
         <Image Grid.Column="3"
-                   Grid.Row="0"
-                   Tag="p1_played"
-                   Source="{Binding P2_Card3}" />
+               Grid.Row="0"
+               Style="{StaticResource CardStyle}"
+               Source="{Binding P2_Card3}" />
 
         <Image Grid.Column="4"
-                   Grid.Row="0"
-                   Tag="p1_played"
-                   Source="{Binding P2_Card4}" />
+               Grid.Row="0"
+               Style="{StaticResource CardStyle}"
+               Source="{Binding P2_Card4}" />
 
         <Image Grid.Column="5"
-                   Grid.Row="0"
-                   Tag="p1_played"
-                   Source="{Binding P2_Card5}" />
+               Grid.Row="0"
+               Style="{StaticResource CardStyle}"
+               Source="{Binding P2_Card5}" />
 
+        <Image Grid.Column="6"
+               Grid.Row="1"
+               Style="{StaticResource CardStyle}"
+               Source="{Binding P3_Card1}"/>
+
+        <Image Grid.Column="6"
+               Grid.Row="2"
+               Style="{StaticResource CardStyle}"
+               Source="{Binding P3_Card2}" />
+
+        <Image Grid.Column="6"
+               Grid.Row="3"
+               Style="{StaticResource CardStyle}"
+               Source="{Binding P3_Card3}" />
+
+        <Image Grid.Column="6"
+               Grid.Row="4"
+               Style="{StaticResource CardStyle}"
+               Source="{Binding P3_Card4}" />
+
+        <Image Grid.Column="6"
+               Grid.Row="5"
+               Style="{StaticResource CardStyle}"
+               Source="{Binding P3_Card5}" />
+
+        <Image Grid.Column="0"
+               Grid.Row="1"
+               Style="{StaticResource CardStyle}"
+               Source="{Binding P4_Card1}"/>
+
+        <Image Grid.Column="0"
+               Grid.Row="2"
+               Style="{StaticResource CardStyle}"
+               Source="{Binding P4_Card2}" />
+
+        <Image Grid.Column="0"
+               Grid.Row="3"
+               Style="{StaticResource CardStyle}"
+               Source="{Binding P4_Card3}" />
+
+        <Image Grid.Column="0"
+               Grid.Row="4"
+               Style="{StaticResource CardStyle}"
+               Source="{Binding P4_Card4}" />
+
+        <Image Grid.Column="0"
+               Grid.Row="5"
+               Style="{StaticResource CardStyle}"
+               Source="{Binding P4_Card5}" />
+        <!--
         <TextBlock Grid.Column="0"
                    Grid.Row="6"
                    HorizontalAlignment="Center"
@@ -127,7 +187,7 @@
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    Text="{Binding P2_Score}" />
-        
+        -->
         <Ellipse Grid.Column="3"
                  Name="TurnIndicator"
                  Width="5"

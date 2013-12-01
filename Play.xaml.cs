@@ -58,7 +58,7 @@ namespace poker
         private void pressSubBtn(object sender, RoutedEventArgs e)
         {
             game.doSub();
-            
+
             // Hide sub button if sub rounds are done
             if(game.subsFinished())
             {

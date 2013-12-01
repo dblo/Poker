@@ -14,12 +14,11 @@ namespace poker
     {
         readonly int CARDS_PER_HAND = 5,
                   ALLOWED_SUBST = 2;
-        readonly string[] suitsArray = {"h", "s", "d", "c"};
+        readonly string[] suitsArray = { "h", "s", "d", "c" };
         Deck deck;
-        Card[] player1, player2;
+        Card[] player1, player2, player3, player4;
         Queue<int> cardsToSub;
         int subRound,
-            p1_played_index,
             p1_score,
             p2_score;
         BitmapImage[] cardImages;
@@ -29,8 +28,10 @@ namespace poker
             deck = new Deck();
             player1 = new Card[CARDS_PER_HAND];
             player2 = new Card[CARDS_PER_HAND];
+            player3 = new Card[CARDS_PER_HAND];
+            player4 = new Card[CARDS_PER_HAND];
             cardsToSub = new Queue<int>();
-            cardImages = new BitmapImage[52];
+            cardImages = new BitmapImage[53];
             loadImages();
         }
 
@@ -40,49 +41,54 @@ namespace poker
             for (int i = 0; i < CARDS_PER_HAND; i++)
             {
                 player1[i] = deck.draw();
-                player2[i] = deck.draw();
+                player2[i] = null;// deck.draw();
+                player3[i] = null;// deck.draw();
+                player4[i] = null;// deck.draw();
             }
             subRound = 1;
-            p1_played_index = -1;
             p1_score = p2_score = 0;
         }
 
         public void loadImages()
         {
             string mediaPath = "C:/Users/First/Documents/Visual Studio 2013/Projects/poker/poker/Media/"; //todo
-            for (int i = 0; i < 52; i++ )
+            cardImages[0] = new BitmapImage(new Uri(mediaPath + "Back.png"));
+
+            for (int i = 1; i < 53; i++)
             {
-                Card card = deck.getCardByIndex(i);
+                Card card = deck.getCardByIndex(i-1);
                 cardImages[i] = new BitmapImage(new Uri(mediaPath + card.toString() + ".png"));
             }
         }
 
         private BitmapImage getImage(Card card)
         {
+            if (card == null)
+            // Return card backside
+                return cardImages[0];
+
             int suitOffset = 0;
-            switch(card.getSuit())
+            switch (card.getSuit())
             {
-                //case 'h':
-                //    suitOffset = 0;
-                //    break;
+                //case h => 0 offset
 
                 case "s":
-                suitOffset = 13;
-                break;
+                    suitOffset = 13;
+                    break;
 
                 case "d":
-                suitOffset = 26;
-                break;
+                    suitOffset = 26;
+                    break;
 
                 case "c":
                     suitOffset = 39;
                     break;
             }
 
-            suitOffset += card.getNumber() - 1;
+            suitOffset += card.getNumber();
             return cardImages[suitOffset];
         }
-        
+
         public void markCardForsub(int cardNum)
         {
             cardsToSub.Enqueue(cardNum);
@@ -100,8 +106,24 @@ namespace poker
                 OnPropertyChanged(s);
             }
             subRound++;
-            //printHandToDebug();
-        }
+
+            if(subsFinished())
+                for (int i = 0; i < CARDS_PER_HAND; i++)
+                {
+                    player2[i] = deck.draw();
+                    player3[i] = deck.draw();
+                    player4[i] = deck.draw();
+
+                    string s = "P2_Card" + (i+ 1).ToString();
+                    OnPropertyChanged(s);
+                    
+                    s = "P3_Card" + (i + 1).ToString();
+                    OnPropertyChanged(s);
+                    
+                    s = "P4_Card" + (i + 1).ToString();
+                    OnPropertyChanged(s);
+                }
+        }   
 
         // Return true if no more substitutions are allowed
         public bool subsFinished()
@@ -158,82 +180,82 @@ namespace poker
         public BitmapImage P1_Card1
         {
             get { return getImage(player1[0]); }
-            //set
-            //{
-            //    OnPropertyChanged("Card1");
-            //}
         }
         public BitmapImage P1_Card2
         {
             get { return getImage(player1[1]); }
-            //set
-            //{
-            //    OnPropertyChanged("Card2");
-            //}
         }
         public BitmapImage P1_Card3
         {
             get { return getImage(player1[2]); }
-            //set
-            //{
-            //    OnPropertyChanged("Card3");
-            //}
         }
         public BitmapImage P1_Card4
         {
             get { return getImage(player1[3]); }
-            //set
-            //{
-            //    OnPropertyChanged("Card4");
-            //}
         }
         public BitmapImage P1_Card5
         {
             get { return getImage(player1[4]); }
-            //set
-            //{
-            //    OnPropertyChanged("Card5");
-            //}
         }
         public BitmapImage P2_Card1
         {
             get { return getImage(player2[0]); }
-            //set
-            //{
-            //    OnPropertyChanged("Card1");
-            //}
         }
         public BitmapImage P2_Card2
         {
             get { return getImage(player2[1]); }
-            //set
-            //{
-            //    OnPropertyChanged("Card2");
-            //}
         }
         public BitmapImage P2_Card3
         {
             get { return getImage(player2[2]); }
-            //set
-            //{
-            //    OnPropertyChanged("Card3");
-            //}
         }
         public BitmapImage P2_Card4
         {
             get { return getImage(player2[3]); }
-            //set
-            //{
-            //    OnPropertyChanged("Card4");
-            //}
         }
         public BitmapImage P2_Card5
         {
             get { return getImage(player2[4]); }
-            //set
-            //{
-            //    OnPropertyChanged("Card5");
-            //}
+        }
+        public BitmapImage P3_Card1
+        {
+            get { return getImage(player3[0]); }
+        }
+        public BitmapImage P3_Card2
+        {
+            get { return getImage(player3[1]); }
+        }
+        public BitmapImage P3_Card3
+        {
+            get { return getImage(player3[2]); }
+        }
+        public BitmapImage P3_Card4
+        {
+            get { return getImage(player3[3]); }
+        }
+        public BitmapImage P3_Card5
+        {
+            get { return getImage(player3[4]); }
+        }
+        public BitmapImage P4_Card1
+        {
+            get { return getImage(player4[0]); }
+        }
+        public BitmapImage P4_Card2
+        {
+            get { return getImage(player4[1]); }
+        }
+        public BitmapImage P4_Card3
+        {
+            get { return getImage(player4[2]); }
+        }
+        public BitmapImage P4_Card4
+        {
+            get { return getImage(player4[3]); }
+        }
+        public BitmapImage P4_Card5
+        {
+            get { return getImage(player4[4]); }
         }
     }
 }
