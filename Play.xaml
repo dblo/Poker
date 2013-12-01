@@ -19,6 +19,9 @@
             <Setter Property="Width" Value="70" />
             <Setter Property="Height" Value="95" />
         </Style>
+        <Style x:Key="ScoreText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20" />
+        </Style>
     </Page.Resources>
 
     <Grid Height="700"
@@ -205,26 +208,41 @@
                Style="{StaticResource CardStyle}"
                Name="p4card5"
                Source="{Binding P4_Card5}" />
-        <!--
+        
         <TextBlock Grid.Column="0"
                    Grid.Row="6"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Bottom"
+                   Style="{StaticResource ScoreText}"
                    Text="{Binding P1_Score}" />
 
         <TextBlock Grid.Column="6"
                    Grid.Row="0"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Top"
+                   Style="{StaticResource ScoreText}"
                    Text="{Binding P2_Score}" />
-        -->
+
+        <TextBlock Grid.Column="6"
+                   Grid.Row="0"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Bottom"
+                   Style="{StaticResource ScoreText}"
+                   Text="{Binding P3_Score}" />
+
+        <TextBlock Grid.Column="0"
+                   Grid.Row="6"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Top"
+                   Style="{StaticResource ScoreText}"
+                   Text="{Binding P4_Score}" />
+        <!--
         <Ellipse Grid.Column="3"
                  Name="TurnIndicator"
                  Width="5"
                  Height="5"
                  VerticalAlignment="Center"
                  HorizontalAlignment="Center" />
-
-
+        -->
     </Grid>
 </Page>

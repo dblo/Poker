@@ -22,6 +22,8 @@ namespace poker
         int subRound,
             p1_score,
             p2_score,
+            p3_score,
+            p4_score,
             p1Played,
             p2Played,
             p3Played,
@@ -43,10 +45,9 @@ namespace poker
 
         public void newGame()
         {
-            p1_score = p2_score = 0;
+            p1_score = p2_score = p3_score = p4_score = 0;
             newRound();
         }
-
 
         public void newRound()
         {
@@ -139,23 +140,6 @@ namespace poker
                 OnPropertyChanged(s);
             }
             subRound++;
-
-            //if(subsFinished())
-            //    for (int i = 0; i < CARDS_PER_HAND; i++)
-            //    {
-            //        player2[i] = deck.draw();
-            //        player3[i] = deck.draw();
-            //        player4[i] = deck.draw();
-
-            //        string s = "P2_Card" + (i+ 1).ToString();
-            //        OnPropertyChanged(s);
-
-            //        s = "P3_Card" + (i + 1).ToString();
-            //        OnPropertyChanged(s);
-
-            //        s = "P4_Card" + (i + 1).ToString();
-            //        OnPropertyChanged(s);
-            //    }
         }
 
         // Return true if no more substitutions are allowed
@@ -209,13 +193,6 @@ namespace poker
         public bool roundOver()
         {
             return stickRound > STICK_ROUNDS;
-        }
-
-        // Debug util
-        private void printHandToDebug()
-        {
-            foreach (Card c in player1)
-                System.Diagnostics.Debug.Print(c.toString());
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -276,6 +253,18 @@ namespace poker
         {
             get { return p2_score; }
             set { p2_score = value; OnPropertyChanged("P2_Score"); }
+        }
+
+        public int P3_Score
+        {
+            get { return p3_score; }
+            set { p3_score = value; OnPropertyChanged("P3_Score"); }
+        }
+
+        public int P4_Score
+        {
+            get { return p4_score; }
+            set { p4_score = value; OnPropertyChanged("P4_Score"); }
         }
 
         public BitmapImage P1_Card1
