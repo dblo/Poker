@@ -128,8 +128,9 @@ namespace poker
             cardsToSub.Enqueue(cardNum);
         }
 
-        public void doSub()
+        public int[] doSub()
         {
+            int[] subbedCards = cardsToSub.ToArray();
             while (cardsToSub.Count() > 0)
             {
                 int cardIndex = cardsToSub.Dequeue() - 1;
@@ -140,6 +141,7 @@ namespace poker
                 OnPropertyChanged(s);
             }
             subRound++;
+            return subbedCards;
         }
 
         // Return true if no more substitutions are allowed

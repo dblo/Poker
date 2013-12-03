@@ -36,8 +36,8 @@ namespace poker
         {
             if (!game.roundOver())
             {
-                Image b = (Image)sender;
-                char last = b.Tag.ToString().Last();
+                Image selectedCard = (Image)sender;
+                char last = selectedCard.Tag.ToString().Last();
                 int cardNumber = (int)last - '0';
 
                 if (game.subsFinished())
@@ -73,14 +73,18 @@ namespace poker
                 else
                 {
                     game.markCardForsub(cardNumber);
-                    //b.Opacity = 0.5; //todo
+                    selectedCard.Opacity = 0.5;
                 }
             }
         }
 
         private void pressSubBtn(object sender, RoutedEventArgs e)
         {
-            game.doSub();
+            foreach (int subbedCard in game.doSub())
+            {
+                Image subbedImage = FindName("p1card" + subbedCard.ToString()) as Image;
+                subbedImage.Opacity = 1;
+            }
 
             // Hide sub button if sub rounds are done
             if (game.subsFinished())
