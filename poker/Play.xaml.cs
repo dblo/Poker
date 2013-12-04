@@ -21,50 +21,65 @@ namespace poker
     /// </summary>
     public partial class Play : Page
     {
-        Game game;
+        private Game game;
 
         public Play()
         {
             game = new Game();
             game.newGame();
             InitializeComponent();
+
+            // Make the cards look better
             RenderOptions.SetBitmapScalingMode(this, BitmapScalingMode.Fant);
             DataContext = game;
         }
 
+        //Hide cards played by computer opponents
+        private void hideCompPlayedCards()
+        {
+            Image playedCardImg;
+            playedCardImg = FindName("p2card" + game.getP2Played().ToString()) as Image;
+            playedCardImg.Visibility = Visibility.Hidden;
+
+            playedCardImg = FindName("p3card" + game.getP3Played().ToString()) as Image;
+            playedCardImg.Visibility = Visibility.Hidden;
+
+            playedCardImg = FindName("p4card" + game.getP4Played().ToString()) as Image;
+            playedCardImg.Visibility = Visibility.Hidden;
+        }
+
+        // Make images containing cards in hands visible for showdown at tend of round
+        private void makeCardsVisible()
+        {
+            Image playedCardImg;
+            for (int i = 1; i < 5; i++)
+                for (int j = 1; j <= 5; j++)
+                {
+                    playedCardImg = FindName("p" + i.ToString() + "card" + j.ToString()) as Image;
+                    playedCardImg.Visibility = Visibility.Visible;
+                }
+        }
+
+        // Mark card to be substituted or play a card depending on game stage
         private void selectCard(object sender, RoutedEventArgs e)
         {
             if (!game.roundOver())
             {
                 Image selectedCard = (Image)sender;
-                char last = selectedCard.Tag.ToString().Last();
-                int cardNumber = (int)last - '0';
+
+                //Card number is stored at end of card tag
+                char lastChar = selectedCard.Tag.ToString().Last();
+                int cardNumber = (int)lastChar - '0';
 
                 if (game.subsFinished())
                 {
-                    Image playedCardImg;
                     game.playCard(cardNumber);
-                    playedCardImg = FindName("p1card" + cardNumber.ToString()) as Image;
-                    playedCardImg.Visibility = Visibility.Hidden;
-
-                    playedCardImg = FindName("p2card" + game.getP2Played().ToString()) as Image;
-                    playedCardImg.Visibility = Visibility.Hidden;
-
-                    playedCardImg = FindName("p3card" + game.getP3Played().ToString()) as Image;
-                    playedCardImg.Visibility = Visibility.Hidden;
-
-                    playedCardImg = FindName("p4card" + game.getP4Played().ToString()) as Image;
-                    playedCardImg.Visibility = Visibility.Hidden;
+                    selectedCard.Visibility = Visibility.Hidden;
+                    hideCompPlayedCards();
 
                     if (game.roundOver())
                     {
-                        for (int i = 1; i < 5; i++)
-                            for (int j = 1; j <= 5; j++)
-                            {
-                                playedCardImg = FindName("p" + i.ToString() + "card" + j.ToString()) as Image;
-                                playedCardImg.Visibility = Visibility.Visible;
-                            }
-
+                        makeCardsVisible();
                         Button btn = FindName("controlBtn") as Button;
                         btn.Content = "Next";
                         btn.Visibility = Visibility.Visible;
@@ -72,35 +87,39 @@ namespace poker
                 }
                 else
                 {
-                    game.markCardForsub(cardNumber);
+                    game.markCardForSub(cardNumber);
                     selectedCard.Opacity = 0.5;
                 }
             }
         }
-
+    
+        // Initiate cards substitution or start next round depending on game stage
         private void pressSubBtn(object sender, RoutedEventArgs e)
         {
-            foreach (int subbedCard in game.doSub())
+            int[] toSubCards = game.getCardsToSub();
+            game.doSub();
+
+            foreach (int subbedCard in toSubCards)
             {
                 Image subbedImage = FindName("p1card" + subbedCard.ToString()) as Image;
                 subbedImage.Opacity = 1;
             }
 
-            // Hide sub button if sub rounds are done
             if (game.subsFinished())
             {
                 Button btn = e.Source as Button;
-                if (btn != null)
-                    btn.Visibility = Visibility.Hidden;
-
+                
                 if (game.roundOver())
                 {
                     game.newRound();
                     btn.Content = "Sub";
                     btn.Visibility = Visibility.Visible;
                 }
+                else
+                {
+                    btn.Visibility = Visibility.Hidden;
+                }
             }
         }
     }
 }
-

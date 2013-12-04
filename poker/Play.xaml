@@ -10,23 +10,18 @@
 	Title="Play">
 
     <Page.Resources>
-        <Style x:Key="CardButtonStyle" TargetType="Button">
-            <Setter Property="BorderBrush" Value="Transparent" />
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-        </Style>
         <Style x:Key="CardStyle" TargetType="Image">
             <Setter Property="Width" Value="70" />
             <Setter Property="Height" Value="95" />
         </Style>
-        <Style x:Key="ScoreText" TargetType="TextBlock">
+        <Style x:Key="ScoreTextStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="20" />
         </Style>
     </Page.Resources>
 
     <Grid Height="700"
           Width="500"
-        Background="Green">
+          Background="Green">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
@@ -208,33 +203,33 @@
                Style="{StaticResource CardStyle}"
                Name="p4card5"
                Source="{Binding P4_Card5}" />
-        
+
         <TextBlock Grid.Column="0"
                    Grid.Row="6"
                    HorizontalAlignment="Right"
                    VerticalAlignment="Bottom"
-                   Style="{StaticResource ScoreText}"
+                   Style="{StaticResource ScoreTextStyle}"
                    Text="{Binding P1_Score}" />
 
         <TextBlock Grid.Column="6"
                    Grid.Row="0"
                    HorizontalAlignment="Left"
                    VerticalAlignment="Top"
-                   Style="{StaticResource ScoreText}"
+                   Style="{StaticResource ScoreTextStyle}"
                    Text="{Binding P2_Score}" />
 
         <TextBlock Grid.Column="6"
                    Grid.Row="0"
                    HorizontalAlignment="Right"
                    VerticalAlignment="Bottom"
-                   Style="{StaticResource ScoreText}"
+                   Style="{StaticResource ScoreTextStyle}"
                    Text="{Binding P3_Score}" />
 
         <TextBlock Grid.Column="0"
                    Grid.Row="6"
                    HorizontalAlignment="Left"
                    VerticalAlignment="Top"
-                   Style="{StaticResource ScoreText}"
+                   Style="{StaticResource ScoreTextStyle}"
                    Text="{Binding P4_Score}" />
         <!--
         <Ellipse Grid.Column="3"

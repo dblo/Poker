@@ -10,19 +10,22 @@ namespace poker
     {
         private Card[] cards;
         private int top;
+        private readonly string[] suits = { "h", "s", "d", "c" };
 
         public Deck()
         {
             cards = new Card[52];
             top = 0;
-            
-            string[] suits = {"h", "s", "d", "c"};
+            makeDeck();
+        }
+
+        private void makeDeck()
+        {
             int i = 0;
             foreach (string suit in suits)
-                for (int j = 1; j < 14; j++)
+                for (int j = 1; j <= 13; i++, j++)
                 {
                     cards[i] = new Card(suit, j);
-                    i++;
                 }
         }
 
@@ -41,8 +44,8 @@ namespace poker
 
         public void shuffle()
         {
-            Random rng = new Random();
             Card tmp;
+            Random rng = new Random();
             for (int i=0; i < 1000; i++)
             {
                 int swap1 = rng.Next(0, 51),

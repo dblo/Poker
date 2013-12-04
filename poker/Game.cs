@@ -12,14 +12,15 @@ namespace poker
 {
     class Game : INotifyPropertyChanged
     {
-        readonly int CARDS_PER_HAND = 5,
+        private readonly int CARDS_PER_HAND = 5,
                   ALLOWED_SUBST = 2,
                   STICK_ROUNDS = 5;
-        readonly string[] suitsArray = { "h", "s", "d", "c" };
-        Deck deck;
-        Card[] player1, player2, player3, player4;
-        Queue<int> cardsToSub;
-        int subRound,
+
+        private Deck deck;
+        private Card[] player1, player2, player3, player4;
+        private Queue<int> cardsToSub;
+        private BitmapImage[] cardImages;
+        private int subRound,
             p1_score,
             p2_score,
             p3_score,
@@ -29,7 +30,6 @@ namespace poker
             p3Played,
             p4Played,
             stickRound;
-        BitmapImage[] cardImages;
 
         public Game()
         {
@@ -39,6 +39,8 @@ namespace poker
             player3 = new Card[CARDS_PER_HAND];
             player4 = new Card[CARDS_PER_HAND];
             cardsToSub = new Queue<int>();
+            
+            // To store card backside at index 0
             cardImages = new BitmapImage[53];
             loadImages();
         }
@@ -52,9 +54,8 @@ namespace poker
         public void newRound()
         {
             deck.shuffle();
-            subRound = 1;
+            subRound = stickRound = 1;
             p1Played = p2Played = p3Played = p4Played = -1;
-            stickRound = 1;
 
             for (int i = 0; i < CARDS_PER_HAND; i++)
             {
@@ -65,13 +66,15 @@ namespace poker
 
                 for (int j = 1; j < 5; j++)
                 {
-                    string s = "P" + j.ToString() + "_Card" + (i + 1).ToString();
-                    OnPropertyChanged(s);
+                    // Notify gui to show new cards
+                    string card = "P" + j.ToString() + "_Card" + (i + 1).ToString();
+                    OnPropertyChanged(card);
                 }
             }
 
             for (int j = 1; j < 5; j++)
             {
+                // Notify gui to remove old played cards
                 string s = "P" + j.ToString() + "_Played";
                 OnPropertyChanged(s);
             }
@@ -80,7 +83,6 @@ namespace poker
         public void loadImages()
         {
             cardImages[0] = new BitmapImage(new Uri("Media/Back.png", UriKind.Relative));
-
             for (int i = 1; i < 53; i++)
             {
                 Card card = deck.getCardByIndex(i - 1);
@@ -88,6 +90,8 @@ namespace poker
             }
         }
 
+        // Called for computer players. If the round is not over, the cards in their hands will
+        // be dispayed with the backsides up
         private BitmapImage getImageComp(Card card)
         {
             if (!roundOver())
@@ -98,12 +102,13 @@ namespace poker
             return getImage(card);
         }
 
+        // Return the image resource for param card
         private BitmapImage getImage(Card card)
         {
             int suitOffset = 0;
             switch (card.getSuit())
             {
-                //case h => 0 offset
+                //For case 'h' the offset = 0
 
                 case "s":
                     suitOffset = 13;
@@ -122,25 +127,29 @@ namespace poker
             return cardImages[suitOffset];
         }
 
-        public void markCardForsub(int cardNum)
+        public void markCardForSub(int cardNum)
         {
             cardsToSub.Enqueue(cardNum);
         }
 
-        public int[] doSub()
+        // Return an array containing all cards the player want to substitute
+        public int[] getCardsToSub()
         {
-            int[] subbedCards = cardsToSub.ToArray();
+            return cardsToSub.ToArray();
+        }
+
+        // Replace all substituted cards by drawing new ones and ask gui to update
+        public void doSub()
+        {
             while (cardsToSub.Count() > 0)
             {
                 int cardIndex = cardsToSub.Dequeue() - 1;
                 player1[cardIndex] = deck.draw();
 
-                //Todo, not manual call of onprop..
                 string s = "P1_Card" + (cardIndex + 1).ToString();
                 OnPropertyChanged(s);
             }
             subRound++;
-            return subbedCards;
         }
 
         // Return true if no more substitutions are allowed
@@ -194,16 +203,6 @@ namespace poker
         public bool roundOver()
         {
             return stickRound > STICK_ROUNDS;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name)
-        {
-            PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null)
-            {
-                handler(this, new PropertyChangedEventArgs(name));
-            }
         }
 
         public BitmapImage P1_Played
@@ -347,6 +346,16 @@ namespace poker
         public BitmapImage P4_Card5
         {
             get { return getImageComp(player4[4]); }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
+            }
         }
     }
 }
