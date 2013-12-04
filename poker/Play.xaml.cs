@@ -38,14 +38,12 @@ namespace poker
         private void hideCompPlayedCards()
         {
             Image playedCardImg;
-            playedCardImg = FindName("p2card" + game.getP2Played().ToString()) as Image;
-            playedCardImg.Visibility = Visibility.Hidden;
-
-            playedCardImg = FindName("p3card" + game.getP3Played().ToString()) as Image;
-            playedCardImg.Visibility = Visibility.Hidden;
-
-            playedCardImg = FindName("p4card" + game.getP4Played().ToString()) as Image;
-            playedCardImg.Visibility = Visibility.Hidden;
+            for (int i = 2; i <= 4; i++)
+            {
+                playedCardImg = FindName("p" + i.ToString() + "card" + 
+                    game.getPlayedCard(i).ToString()) as Image;
+                playedCardImg.Visibility = Visibility.Hidden;
+            }
         }
 
         // Make images containing cards in hands visible for showdown at tend of round
@@ -55,7 +53,8 @@ namespace poker
             for (int i = 1; i < 5; i++)
                 for (int j = 1; j <= 5; j++)
                 {
-                    playedCardImg = FindName("p" + i.ToString() + "card" + j.ToString()) as Image;
+                    playedCardImg = FindName("p" + i.ToString() + 
+                        "card" + j.ToString()) as Image;
                     playedCardImg.Visibility = Visibility.Visible;
                 }
         }

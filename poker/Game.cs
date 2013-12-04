@@ -14,22 +14,15 @@ namespace poker
     {
         private readonly int CARDS_PER_HAND = 5,
                   ALLOWED_SUBST = 2,
-                  STICK_ROUNDS = 5;
+                  STICK_ROUNDS = 5,
+                  NUM_OF_PLAYERS = 4;
 
         private Deck deck;
         private Card[] player1, player2, player3, player4;
         private Queue<int> cardsToSub;
         private BitmapImage[] cardImages;
-        private int subRound,
-            p1_score,
-            p2_score,
-            p3_score,
-            p4_score,
-            p1Played,
-            p2Played,
-            p3Played,
-            p4Played,
-            stickRound;
+        private int subRound, stickRound;
+        private int[] playerScore, playerPlayed;
 
         public Game()
         {
@@ -39,6 +32,8 @@ namespace poker
             player3 = new Card[CARDS_PER_HAND];
             player4 = new Card[CARDS_PER_HAND];
             cardsToSub = new Queue<int>();
+            playerScore = new int[NUM_OF_PLAYERS];
+            playerPlayed = new int[CARDS_PER_HAND];
             
             // To store card backside at index 0
             cardImages = new BitmapImage[53];
@@ -47,15 +42,20 @@ namespace poker
 
         public void newGame()
         {
-            p1_score = p2_score = p3_score = p4_score = 0;
-            newRound();
+            for (int i = 0; i < NUM_OF_PLAYERS; i++)
+                playerScore[i] = 0;
+                newRound();
         }
 
         public void newRound()
         {
             deck.shuffle();
             subRound = stickRound = 1;
-            p1Played = p2Played = p3Played = p4Played = -1;
+
+            // Set no card played yet
+            for (int j = 0; j < NUM_OF_PLAYERS; j++)
+                playerPlayed[j] = -1;
+
 
             for (int i = 0; i < CARDS_PER_HAND; i++)
             {
@@ -64,7 +64,7 @@ namespace poker
                 player3[i] = deck.draw();
                 player4[i] = deck.draw();
 
-                for (int j = 1; j < 5; j++)
+                for (int j = 1; j <= NUM_OF_PLAYERS; j++)
                 {
                     // Notify gui to show new cards
                     string card = "P" + j.ToString() + "_Card" + (i + 1).ToString();
@@ -72,7 +72,7 @@ namespace poker
                 }
             }
 
-            for (int j = 1; j < 5; j++)
+            for (int j = 1; j <= NUM_OF_PLAYERS; j++)
             {
                 // Notify gui to remove old played cards
                 string s = "P" + j.ToString() + "_Played";
@@ -92,7 +92,7 @@ namespace poker
 
         // Called for computer players. If the round is not over, the cards in their hands will
         // be dispayed with the backsides up
-        private BitmapImage getImageComp(Card card)
+        private BitmapImage getImageCompPlayer(Card card)
         {
             if (!roundOver())
             {
@@ -161,17 +161,14 @@ namespace poker
         public void playCard(int cardNum)
         {
             stickRound++;
-            p1Played = cardNum - 1;
+            playerPlayed[0] = cardNum-1;
             OnPropertyChanged("P1_Played");
 
-            p2Played++;
-            OnPropertyChanged("P2_Played");
-
-            p3Played++;
-            OnPropertyChanged("P3_Played");
-
-            p4Played++;
-            OnPropertyChanged("P4_Played");
+            for (int i = 1; i < NUM_OF_PLAYERS; i++)
+            {
+                playerPlayed[i]++;
+                OnPropertyChanged("P" + (i+1).ToString() + "_Played");
+            }
 
             // Comp players showdown of cards
             if (roundOver())
@@ -185,19 +182,9 @@ namespace poker
             }
         }
 
-        public int getP2Played()
+        public int getPlayedCard(int player)
         {
-            return p2Played + 1;
-        }
-
-        public int getP3Played()
-        {
-            return p3Played + 1;
-        }
-
-        public int getP4Played()
-        {
-            return p4Played + 1;
+            return playerPlayed[player-1] + 1;
         }
 
         public bool roundOver()
@@ -209,8 +196,8 @@ namespace poker
         {
             get
             {
-                if (p1Played >= 0)
-                    return getImage(player1[p1Played]);
+                if (playerPlayed[0] >= 0)
+                    return getImage(player1[playerPlayed[0]]);
                 return null;
             }
         }
@@ -219,8 +206,8 @@ namespace poker
         {
             get
             {
-                if (p2Played >= 0)
-                    return getImage(player2[p2Played]);
+                if (playerPlayed[1] >= 0)
+                    return getImage(player2[playerPlayed[1]]);
                 return null;
             }
         }
@@ -228,8 +215,8 @@ namespace poker
         {
             get
             {
-                if (p3Played >= 0)
-                    return getImage(player3[p3Played]);
+                if (playerPlayed[2] >= 0)
+                    return getImage(player3[playerPlayed[2]]);
                 return null;
             }
         }
@@ -238,33 +225,33 @@ namespace poker
         {
             get
             {
-                if (p4Played >= 0)
-                    return getImage(player4[p4Played]);
+                if (playerPlayed[3] >= 0)
+                    return getImage(player4[playerPlayed[3]]);
                 return null;
             }
         }
         public int P1_Score
         {
-            get { return p1_score; }
-            set { p1_score = value; OnPropertyChanged("P1_Score"); }
+            get { return playerScore[0]; }
+            set { playerScore[0] = value; OnPropertyChanged("P1_Score"); }
         }
 
         public int P2_Score
         {
-            get { return p2_score; }
-            set { p2_score = value; OnPropertyChanged("P2_Score"); }
+            get { return playerScore[1]; }
+            set { playerScore[1] = value; OnPropertyChanged("P2_Score"); }
         }
 
         public int P3_Score
         {
-            get { return p3_score; }
-            set { p3_score = value; OnPropertyChanged("P3_Score"); }
+            get { return playerScore[2]; }
+            set { playerScore[2] = value; OnPropertyChanged("P3_Score"); }
         }
 
         public int P4_Score
         {
-            get { return p4_score; }
-            set { p4_score = value; OnPropertyChanged("P4_Score"); }
+            get { return playerScore[3]; }
+            set { playerScore[3] = value; OnPropertyChanged("P4_Score"); }
         }
 
         public BitmapImage P1_Card1
@@ -289,63 +276,63 @@ namespace poker
         }
         public BitmapImage P2_Card1
         {
-            get { return getImageComp(player2[0]); }
+            get { return getImageCompPlayer(player2[0]); }
         }
         public BitmapImage P2_Card2
         {
-            get { return getImageComp(player2[1]); }
+            get { return getImageCompPlayer(player2[1]); }
         }
         public BitmapImage P2_Card3
         {
-            get { return getImageComp(player2[2]); }
+            get { return getImageCompPlayer(player2[2]); }
         }
         public BitmapImage P2_Card4
         {
-            get { return getImageComp(player2[3]); }
+            get { return getImageCompPlayer(player2[3]); }
         }
         public BitmapImage P2_Card5
         {
-            get { return getImageComp(player2[4]); }
+            get { return getImageCompPlayer(player2[4]); }
         }
         public BitmapImage P3_Card1
         {
-            get { return getImageComp(player3[0]); }
+            get { return getImageCompPlayer(player3[0]); }
         }
         public BitmapImage P3_Card2
         {
-            get { return getImageComp(player3[1]); }
+            get { return getImageCompPlayer(player3[1]); }
         }
         public BitmapImage P3_Card3
         {
-            get { return getImageComp(player3[2]); }
+            get { return getImageCompPlayer(player3[2]); }
         }
         public BitmapImage P3_Card4
         {
-            get { return getImageComp(player3[3]); }
+            get { return getImageCompPlayer(player3[3]); }
         }
         public BitmapImage P3_Card5
         {
-            get { return getImageComp(player3[4]); }
+            get { return getImageCompPlayer(player3[4]); }
         }
         public BitmapImage P4_Card1
         {
-            get { return getImageComp(player4[0]); }
+            get { return getImageCompPlayer(player4[0]); }
         }
         public BitmapImage P4_Card2
         {
-            get { return getImageComp(player4[1]); }
+            get { return getImageCompPlayer(player4[1]); }
         }
         public BitmapImage P4_Card3
         {
-            get { return getImageComp(player4[2]); }
+            get { return getImageCompPlayer(player4[2]); }
         }
         public BitmapImage P4_Card4
         {
-            get { return getImageComp(player4[3]); }
+            get { return getImageCompPlayer(player4[3]); }
         }
         public BitmapImage P4_Card5
         {
-            get { return getImageComp(player4[4]); }
+            get { return getImageCompPlayer(player4[4]); }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
