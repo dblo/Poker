@@ -42,7 +42,7 @@ namespace poker
             cardsToSub = new Queue<int>();
             playerScore = new int[NUM_OF_PLAYERS];
             playerPlayed = new int[CARDS_PER_HAND];
-            stickRoundPauseTimer = new System.Timers.Timer(2000);
+            stickRoundPauseTimer = new System.Timers.Timer(1000);
             //stickRoundPauseTimer.Enabled = true;
             stickRoundPauseTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
                 
@@ -111,7 +111,7 @@ namespace poker
             if (!roundOver())
             {
                 // Return card backside
-                return cardImages[0];
+                 return cardImages[0];
             }
             return getImage(card);
         }
@@ -166,6 +166,11 @@ namespace poker
             subRound++;
         }
 
+        public int getPlayedCard(int player)
+        {
+            return playerPlayed[player - 1] + 1;
+        }
+
         public void playCard(int cardNum)
         {
             stickRound++;
@@ -174,7 +179,8 @@ namespace poker
             OnPropertyChanged("P1_Played");
             followCard = player1[cardNum - 1];
 
-            compPlaySticks();
+            if (lastPlayer > 1)
+                compPlaySticks();
 
             if (roundOver())
             {
@@ -196,23 +202,23 @@ namespace poker
         private void compPlaySticks()
         {
             // Pretend player 1 is player 5 for easier looping
-            int last = (lastPlayer > 1) ? lastPlayer : 4;
+            //int last = (lastPlayer > 1) ? lastPlayer : 4;
 
-            for (int i = onPlayer - 1; i < last; i++)
-            {
-                playerPlayed[i]++;
-                OnPropertyChanged("P" + (i + 1).ToString() + "_Played");
-                onPlayer++;
-            }
-            if (onPlayer > NUM_OF_PLAYERS)
+            //for (int i = onPlayer - 1; i < last; i++)
+            //{
+            //    playerPlayed[i]++;
+            //    OnPropertyChanged("P" + (i + 1).ToString() + "_Played");
+            //    onPlayer++;
+            //}
+            //if (onPlayer > NUM_OF_PLAYERS)
+
+            playerPlayed[1]++;
+            OnPropertyChanged("P" + 2.ToString() + "_Played");
+
+            if(firstPlayer > 1)
                 onPlayer = 1;
         }
         
-        public int getPlayedCard(int player)
-        {
-            return playerPlayed[player-1] + 1;
-        }
-
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
             onPlayer = 2;
@@ -220,6 +226,22 @@ namespace poker
             lastPlayer = 1; // (onPlayer + 3) % NUM_OF_PLAYERS;
             if (onPlayer > 1)
                 compPlaySticks();
+            
+            switch(firstPlayer)
+            {
+                case 1:
+                    followCard = player1[playerPlayed[0]];
+                    break;
+                case 2:
+                    followCard = player2[playerPlayed[1]];
+                    break;
+                case 3:
+                    followCard = player3[playerPlayed[2]];
+                    break;
+                case 4:
+                    followCard = player4[playerPlayed[3]];
+                    break;
+            }
             stickRoundPauseTimer.Stop();
         }
 
@@ -244,7 +266,11 @@ namespace poker
 
         private bool cardFollowsSuit(int cardNum)
         {
-            return player1[cardNum-1].getSuit() == followCard.getSuit();
+            String suit = followCard.getSuit();
+            foreach (Card card in player1)
+                if (card.getSuit() == suit)
+                    return player1[cardNum - 1].getSuit() == suit;
+            return true;
         }
 
         public bool mayPlayCard(int cardNum)

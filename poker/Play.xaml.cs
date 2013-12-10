@@ -38,7 +38,7 @@ namespace poker
         private void hideCompPlayedCards()
         {
             Image playedCardImg;
-            for (int i = 2; i <= 4; i++)
+            for (int i = 2; i <= 2; i++) //todo limited to 2p
             {
                 string s = "p" + i.ToString() + "card" +
                     game.getPlayedCard(i).ToString();
