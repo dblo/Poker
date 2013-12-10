@@ -44,47 +44,47 @@
         <Image Grid.Column="1"
                Grid.Row="6"
                Focusable="True"
-               Tag="P1_Card1"
+               Tag="P1_Card0"
                MouseUp="selectCard"
-               Name="p1card1"
+               Name="p1Card0"
                Style="{StaticResource CardStyle}"
-               Source="{Binding P1_Card1}" />
+               Source="{Binding P1_Card0}" />
 
         <Image Grid.Column="2"
                Grid.Row="6"
                Focusable="True"
-               Tag="P1_Card2"
+               Tag="P1_Card1"
                MouseUp="selectCard"
-               Name="p1card2"
+               Name="p1Card1"
                Style="{StaticResource CardStyle}"
-               Source="{Binding P1_Card2}" />
+               Source="{Binding P1_Card1}" />
 
         <Image Grid.Column="3"
                Grid.Row="6"
                Focusable="True"
-               Tag="P1_Card3"
+               Tag="P1_Card2"
                MouseUp="selectCard"
-               Name="p1card3"
+               Name="p1Card2"
                Style="{StaticResource CardStyle}"
-               Source="{Binding P1_Card3}" />
+               Source="{Binding P1_Card2}" />
 
         <Image Grid.Column="4"
                Grid.Row="6"
                Focusable="True"
-               Tag="P1_Card4"
+               Tag="P1_Card3"
                MouseUp="selectCard"
-               Name="p1card4"
+               Name="p1Card3"
                Style="{StaticResource CardStyle}"
-               Source="{Binding P1_Card4}" />
+               Source="{Binding P1_Card3}" />
 
         <Image Grid.Column="5"
                Grid.Row="6"
                Focusable="True"
-               Tag="P1_Card5"
+               Tag="P1_Card4"
                MouseUp="selectCard"
-               Name="p1card5"
+               Name="p1Card4"
                Style="{StaticResource CardStyle}"
-               Source="{Binding P1_Card5}" />
+               Source="{Binding P1_Card4}" />
 
         <Button Click="pressSubBtn"
                 Grid.Column="6"
@@ -117,92 +117,92 @@
         <Image Grid.Column="1"
                Grid.Row="0"
                Style="{StaticResource CardStyle}"
-               Name="p2card1"
-               Source="{Binding P2_Card1}"/>
+               Name="p2Card0"
+               Source="{Binding P2_Card0}"/>
 
         <Image Grid.Column="2"
                Grid.Row="0"
                Style="{StaticResource CardStyle}"
-               Name="p2card2"
-               Source="{Binding P2_Card2}" />
+               Name="p2Card1"
+               Source="{Binding P2_Card1}" />
 
         <Image Grid.Column="3"
                Grid.Row="0"
                Style="{StaticResource CardStyle}"
-               Name="p2card3"
-               Source="{Binding P2_Card3}" />
+               Name="p2Card2"
+               Source="{Binding P2_Card2}" />
 
         <Image Grid.Column="4"
                Grid.Row="0"
                Style="{StaticResource CardStyle}"
-               Name="p2card4"
-               Source="{Binding P2_Card4}" />
+               Name="p2Card3"
+               Source="{Binding P2_Card3}" />
 
         <Image Grid.Column="5"
                Grid.Row="0"
                Style="{StaticResource CardStyle}"
-               Name="p2card5"
-               Source="{Binding P2_Card5}" />
+               Name="p2Card4"
+               Source="{Binding P2_Card4}" />
 
         <Image Grid.Column="6"
                Grid.Row="1"
                Style="{StaticResource CardStyle}"
-               Name="p3card1"
-               Source="{Binding P3_Card1}"/>
+               Name="p3Card0"
+               Source="{Binding P3_Card0}"/>
 
         <Image Grid.Column="6"
                Grid.Row="2"
                Style="{StaticResource CardStyle}"
-               Name="p3card2"
+               Name="p3Card1"
+               Source="{Binding P3_Card1}" />
+
+        <Image Grid.Column="6"
+               Grid.Row="3"
+               Style="{StaticResource CardStyle}"
+               Name="p3Card2"
                Source="{Binding P3_Card2}" />
 
         <Image Grid.Column="6"
-               Grid.Row="3"
-               Style="{StaticResource CardStyle}"
-               Name="p3card3"
-               Source="{Binding P3_Card3}" />
-
-        <Image Grid.Column="6"
                Grid.Row="4"
                Style="{StaticResource CardStyle}"
-               Name="p3card4"
-               Source="{Binding P3_Card4}" />
+               Name="p3Card3"
+               Source="{Binding P3_Card3}" />
 
         <Image Grid.Column="6"
                Grid.Row="5"
                Style="{StaticResource CardStyle}"
-               Name="p3card5"
-               Source="{Binding P3_Card5}" />
+               Name="p3Card4"
+               Source="{Binding P3_Card4}" />
 
         <Image Grid.Column="0"
                Grid.Row="1"
                Style="{StaticResource CardStyle}"
-               Name="p4card1"
-               Source="{Binding P4_Card1}"/>
+               Name="p4Card0"
+               Source="{Binding P4_Card0}"/>
 
         <Image Grid.Column="0"
                Grid.Row="2"
                Style="{StaticResource CardStyle}"
-               Name="p4card2"
-               Source="{Binding P4_Card2}" />
+               Name="p4Card1"
+               Source="{Binding P4_Card1}" />
 
         <Image Grid.Column="0"
                Grid.Row="3"
                Style="{StaticResource CardStyle}"
-               Name="p4card3"
-               Source="{Binding P4_Card3}" />
+               Name="p4Card2"
+               Source="{Binding P4_Card2}" />
 
         <Image Grid.Column="0"
                Grid.Row="4"
                Style="{StaticResource CardStyle}"
-               Name="p4card4"
-               Source="{Binding P4_Card4}" />
+               Name="p4Card3"
+               Source="{Binding P4_Card3}" />
 
         <Image Grid.Column="0"
                Grid.Row="5"
                Style="{StaticResource CardStyle}"
-               Name="p4card5"
-               Source="{Binding P4_Card5}" />
+               Name="p4Card4"
+               Source="{Binding P4_Card4}" />
 
         <TextBlock Grid.Column="0"
                    Grid.Row="6"
