@@ -40,8 +40,9 @@ namespace poker
             Image playedCardImg;
             for (int i = 2; i <= 4; i++)
             {
-                playedCardImg = FindName("p" + i.ToString() + "card" + 
-                    game.getPlayedCard(i).ToString()) as Image;
+                string s = "p" + i.ToString() + "card" +
+                    game.getPlayedCard(i).ToString();
+                playedCardImg = FindName(s) as Image;
                 playedCardImg.Visibility = Visibility.Hidden;
             }
         }
@@ -53,7 +54,7 @@ namespace poker
             for (int i = 1; i < 5; i++)
                 for (int j = 1; j <= 5; j++)
                 {
-                    playedCardImg = FindName("p" + i.ToString() + 
+                    playedCardImg = FindName("p" + i.ToString() +
                         "card" + j.ToString()) as Image;
                     playedCardImg.Visibility = Visibility.Visible;
                 }
@@ -72,16 +73,19 @@ namespace poker
 
                 if (game.subsFinished())
                 {
-                    game.playCard(cardNumber);
-                    selectedCard.Visibility = Visibility.Hidden;
-                    hideCompPlayedCards();
-
-                    if (game.roundOver())
+                    if (game.mayPlayCard(cardNumber))
                     {
-                        makeCardsVisible();
-                        Button btn = FindName("controlBtn") as Button;
-                        btn.Content = "Next";
-                        btn.Visibility = Visibility.Visible;
+                        game.playCard(cardNumber);
+                        selectedCard.Visibility = Visibility.Hidden;
+                        hideCompPlayedCards();
+
+                        if (game.roundOver())
+                        {
+                            makeCardsVisible();
+                            Button btn = FindName("controlBtn") as Button;
+                            btn.Content = "Next";
+                            btn.Visibility = Visibility.Visible;
+                        }
                     }
                 }
                 else
@@ -91,7 +95,7 @@ namespace poker
                 }
             }
         }
-    
+
         // Initiate cards substitution or start next round depending on game stage
         private void pressSubBtn(object sender, RoutedEventArgs e)
         {
@@ -107,7 +111,7 @@ namespace poker
             if (game.subsFinished())
             {
                 Button btn = e.Source as Button;
-                
+
                 if (game.roundOver())
                 {
                     game.newRound();

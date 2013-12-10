@@ -1,4 +1,4 @@
 Poker
 =====
 
-A poker game build with wpf.
+A poker game built with wpf.

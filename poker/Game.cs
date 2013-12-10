@@ -7,10 +7,13 @@ using System.ComponentModel;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.IO;
+using System.Timers;
+
+//Console.Writeline("hi", var);
 
 namespace poker
 {
-    class Game : INotifyPropertyChanged
+    public class Game : INotifyPropertyChanged
     {
         private readonly int CARDS_PER_HAND = 5,
                   ALLOWED_SUBST = 2,
@@ -21,9 +24,14 @@ namespace poker
         private Card[] player1, player2, player3, player4;
         private Queue<int> cardsToSub;
         private BitmapImage[] cardImages;
-        private int subRound, stickRound;
+        private int subRound, stickRound,
+            onPlayer, // Who's turn it is
+            lastPlayer, // Last player to play a card in a stick round
+            firstPlayer; // Player who played the first card in a stick
         private int[] playerScore, playerPlayed;
-
+        private System.Timers.Timer stickRoundPauseTimer;
+        private Card followCard;
+        
         public Game()
         {
             deck = new Deck();
@@ -34,7 +42,10 @@ namespace poker
             cardsToSub = new Queue<int>();
             playerScore = new int[NUM_OF_PLAYERS];
             playerPlayed = new int[CARDS_PER_HAND];
-            
+            stickRoundPauseTimer = new System.Timers.Timer(2000);
+            //stickRoundPauseTimer.Enabled = true;
+            stickRoundPauseTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
+                
             // To store card backside at index 0
             cardImages = new BitmapImage[53];
             loadImages();
@@ -51,6 +62,9 @@ namespace poker
         {
             deck.shuffle();
             subRound = stickRound = 1;
+            onPlayer = 1;
+            lastPlayer = 4;
+            firstPlayer = 1;
 
             // Set no card played yet
             for (int j = 0; j < NUM_OF_PLAYERS; j++)
@@ -152,27 +166,19 @@ namespace poker
             subRound++;
         }
 
-        // Return true if no more substitutions are allowed
-        public bool subsFinished()
-        {
-            return subRound > ALLOWED_SUBST;
-        }
-
         public void playCard(int cardNum)
         {
             stickRound++;
             playerPlayed[0] = cardNum-1;
+            onPlayer++;
             OnPropertyChanged("P1_Played");
+            followCard = player1[cardNum - 1];
 
-            for (int i = 1; i < NUM_OF_PLAYERS; i++)
-            {
-                playerPlayed[i]++;
-                OnPropertyChanged("P" + (i+1).ToString() + "_Played");
-            }
+            compPlaySticks();
 
-            // Comp players showdown of cards
             if (roundOver())
             {
+                // Comp players showdown of cards
                 for (int i = 2; i < 5; i++)
                     for (int j = 1; j <= 5; j++)
                     {
@@ -180,17 +186,76 @@ namespace poker
                         OnPropertyChanged(s);
                     }
             }
+            else
+            {
+                stickRoundPauseTimer.Start();
+            }
         }
 
+        // Computer players will play 1 card each if it's their turn
+        private void compPlaySticks()
+        {
+            // Pretend player 1 is player 5 for easier looping
+            int last = (lastPlayer > 1) ? lastPlayer : 4;
+
+            for (int i = onPlayer - 1; i < last; i++)
+            {
+                playerPlayed[i]++;
+                OnPropertyChanged("P" + (i + 1).ToString() + "_Played");
+                onPlayer++;
+            }
+            if (onPlayer > NUM_OF_PLAYERS)
+                onPlayer = 1;
+        }
+        
         public int getPlayedCard(int player)
         {
             return playerPlayed[player-1] + 1;
+        }
+
+        private void OnTimedEvent(object source, ElapsedEventArgs e)
+        {
+            onPlayer = 2;
+            firstPlayer = 2;
+            lastPlayer = 1; // (onPlayer + 3) % NUM_OF_PLAYERS;
+            if (onPlayer > 1)
+                compPlaySticks();
+            stickRoundPauseTimer.Stop();
+        }
+
+        // Rules
+
+        // Return true if no more substitutions are allowed
+        public bool subsFinished()
+        {
+            return subRound > ALLOWED_SUBST;
         }
 
         public bool roundOver()
         {
             return stickRound > STICK_ROUNDS;
         }
+
+        // Return true if it is the human players turn
+        private bool playersTurn()
+        {
+            return onPlayer == 1;
+        }
+
+        private bool cardFollowsSuit(int cardNum)
+        {
+            return player1[cardNum-1].getSuit() == followCard.getSuit();
+        }
+
+        public bool mayPlayCard(int cardNum)
+        {
+            if (playersTurn())
+                if (firstPlayer == 1 || cardFollowsSuit(cardNum))
+                    return true;
+            return false;
+        }
+
+        // end of rules
 
         public BitmapImage P1_Played
         {
