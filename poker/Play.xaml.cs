@@ -69,7 +69,7 @@ namespace poker
 
                 //Card number is stored at end of card tag
                 char lastChar = selectedCard.Tag.ToString().Last();
-                int cardNumber = (int)lastChar - '0';
+                int cardNumber = lastChar - '0';
 
                 if (game.subsFinished())
                 {

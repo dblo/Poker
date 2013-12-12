@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace poker
 {
-    class Card
+    public class Card
     {
         private string suit;
         private int number;

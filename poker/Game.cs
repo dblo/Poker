@@ -9,8 +9,6 @@ using System.Windows.Media.Imaging;
 using System.IO;
 using System.Timers;
 
-//Console.Writeline("hi", var);
-
 namespace poker
 {
     public class Game : INotifyPropertyChanged
@@ -18,11 +16,14 @@ namespace poker
         private readonly int CARDS_PER_HAND = 5,
                   ALLOWED_SUBST = 2,
                   STICK_ROUNDS = 5,
-                  NUM_OF_PLAYERS = 4;
+                  NUM_OF_PLAYERS = 4,
+                  PLAYER1 = 0,
+                  PLAYER2 = 1,
+                  DEFAULT_TIMER = 1000;
 
         private Deck deck;
-        private Card[] player1, player2, player3, player4;
-        private Card[,] playedCards;
+        private Card[] p1Hand, p2Hand, player3, player4;
+        private Card[] p1RemainingCards, p2RemainingCards;
         private Queue<int> cardsToSub;
         private BitmapImage[] cardImages;
         private int subRound, stickRound,
@@ -36,27 +37,27 @@ namespace poker
         public Game()
         {
             deck = new Deck();
-            player1 = new Card[CARDS_PER_HAND];
-            player2 = new Card[CARDS_PER_HAND];
+            p1Hand = new Card[CARDS_PER_HAND];
+            p2Hand = new Card[CARDS_PER_HAND];
             player3 = new Card[CARDS_PER_HAND];
             player4 = new Card[CARDS_PER_HAND];
-            playedCards = new Card[4,CARDS_PER_HAND];
+            p1RemainingCards = new Card[CARDS_PER_HAND];
+            p2RemainingCards = new Card[CARDS_PER_HAND];
             cardsToSub = new Queue<int>();
             playerScore = new int[NUM_OF_PLAYERS];
             playerPlayed = new int[CARDS_PER_HAND];
-            stickRoundPauseTimer = new System.Timers.Timer(1000);
-            stickRoundPauseTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
                 
             // To store card backside at index 0
             cardImages = new BitmapImage[53];
             loadImages();
+            setStickTimer(DEFAULT_TIMER);
         }
 
         public void newGame()
         {
             for (int i = 0; i < NUM_OF_PLAYERS; i++)
                 playerScore[i] = 0;
-                newRound();
+            newRound();
         }
 
         public void newRound()
@@ -71,20 +72,20 @@ namespace poker
             for (int j = 0; j < NUM_OF_PLAYERS; j++)
                 playerPlayed[j] = -1;
 
-
             for (int i = 0; i < CARDS_PER_HAND; i++)
             {
-                player1[i] = deck.draw();
-                player2[i] = deck.draw();
+                p1Hand[i] = deck.draw();
+                p2Hand[i] = deck.draw();
                 player3[i] = deck.draw();
                 player4[i] = deck.draw();
+                p1RemainingCards[i] = p1Hand[i];
+                p2RemainingCards[i] = p2Hand[i];
 
                 for (int j = 1; j <= NUM_OF_PLAYERS; j++)
                 {
                     // Notify gui to show new cards
-                    string card = "P" + j.ToString() + "_Card" + i.ToString();
+                    string card = "P" + j.ToString() + "_Card" + (i + 1).ToString();
                     OnPropertyChanged(card);
-
                 }
             }
 
@@ -94,6 +95,12 @@ namespace poker
                 string s = "P" + j.ToString() + "_Played";
                 OnPropertyChanged(s);
             }
+        }
+
+        public void setStickTimer(int time)
+        {
+            stickRoundPauseTimer = new System.Timers.Timer(time);
+            stickRoundPauseTimer.Elapsed += new ElapsedEventHandler(OnTimedEvent);
         }
 
         public void loadImages()
@@ -159,10 +166,10 @@ namespace poker
         {
             while (cardsToSub.Count() > 0)
             {
-                int cardIndex = cardsToSub.Dequeue();
-                player1[cardIndex] = deck.draw();
+                int cardIndex = cardsToSub.Dequeue() - 1;
+                p1Hand[cardIndex] = deck.draw();
 
-                string s = "P1_Card" + cardIndex.ToString();
+                string s = "P1_Card" + (cardIndex + 1).ToString();
                 OnPropertyChanged(s);
             }
             subRound++;
@@ -170,134 +177,93 @@ namespace poker
 
         public int getPlayedCard(int player)
         {
-            return playerPlayed[player - 1];
+            return playerPlayed[player - 1] + 1;
         }
 
-        private void cardPlayed(int player, int card)
+        private void showAllCompCards()
         {
-            if (player == 1)
-            {
-                playedCards[player - 1, card] = player1[card];
-                player1[card] = null;
-            }
-            else
-            {
-                playedCards[player - 1, card] = player2[card];
-                player2[card] = null;
-            }
+            for (int i = 2; i < 5; i++)
+                for (int j = 1; j <= 5; j++)
+                {
+                    string s = "P" + i.ToString() + "_Card" + j.ToString();
+                    OnPropertyChanged(s);
+                }
         }
 
         public void playCard(int cardNum)
         {
-            stickRound++;
-            playerPlayed[0] = cardNum;
-            onPlayer++;
+            playerPlayed[PLAYER1] = cardNum-1;
+            p1RemainingCards[cardNum - 1] = null;
             OnPropertyChanged("P1_Played");
+            onPlayer++;
 
-            //cardPlayed(1, cardNum - 1);
-            
+            // New stickround has begun
             if (firstPlayer == 1)
-                followCard = player1[playerPlayed[0]];
-
-            if (lastPlayer > 1)
+            {
+                followCard = p1Hand[cardNum - 1];
                 compPlaySticks();
+            }
+            stickRound++;
 
             if (roundOver())
-            {
-                // Comp players showdown of cards
-                for (int i = 2; i < 5; i++)
-                    for (int j = 1; j <= 5; j++)
-                    {
-                        string s = "P" + i.ToString() + "_Card" + j.ToString();
-                        OnPropertyChanged(s);
-                    }
-            }
+                showAllCompCards();
             else
-            {
                 stickRoundPauseTimer.Start();
+        }
+
+        private void OnTimedEvent(object source, ElapsedEventArgs e)
+        {
+            stickRoundPauseTimer.Stop();
+            onPlayer = 2;
+            firstPlayer = 2;
+            lastPlayer = 1;
+
+            if (firstPlayer > 1)
+            {
+                compPlaySticks();
+                followCard = p2Hand[playerPlayed[PLAYER2]];
             }
         }
 
         // Computer players will play 1 card each if it's their turn
         private void compPlaySticks()
         {
-            // Pretend player 1 is player 5 for easier looping
-            //int last = (lastPlayer > 1) ? lastPlayer : 4;
-
-            //for (int i = onPlayer - 1; i < last; i++)
-            //{
-            //    playerPlayed[i]++;
-            //    OnPropertyChanged("P" + (i + 1).ToString() + "_Played");
-            //    onPlayer++;
-            //}
-            //if (onPlayer > NUM_OF_PLAYERS)
-
             playerPlayed[1]++;
-            //cardPlayed(2, 0);
             OnPropertyChanged("P" + 2.ToString() + "_Played");
 
-            //if(firstPlayer > 1)
-            onPlayer = 1;
+            if(firstPlayer > 1)
+                onPlayer = 1;
         }
         
-        private void OnTimedEvent(object source, ElapsedEventArgs e)
-        {
-            onPlayer = 2;
-            firstPlayer = 2;
-            lastPlayer = 1; // (onPlayer + 3) % NUM_OF_PLAYERS;
-            
-            if (onPlayer > 1)
-            {
-                compPlaySticks();
-                followCard = player2[playerPlayed[1]];
-            }
-            
-            switch(firstPlayer)
-            {
-                case 1:
-                    followCard = player1[playerPlayed[0]];
-                    break;
-                case 2:
-                    followCard = player2[playerPlayed[1]];
-                    break;
-                case 3:
-                    followCard = player3[playerPlayed[2]];
-                    break;
-                case 4:
-                    followCard = player4[playerPlayed[3]];
-                    break;
-            }
-            stickRoundPauseTimer.Stop();
-        }
-
-        // Rules
-
         // Return true if no more substitutions are allowed
         public bool subsFinished()
         {
             return subRound > ALLOWED_SUBST;
         }
-
         public bool roundOver()
         {
             return stickRound > STICK_ROUNDS;
         }
-
         // Return true if it is the human players turn
         private bool playersTurn()
         {
             return onPlayer == 1;
         }
-
         private bool cardFollowsSuit(int cardNum)
         {
-            String suit = followCard.getSuit();
-            foreach (Card card in player1)
-                if (card.getSuit() == suit)
-                    return player1[cardNum].getSuit() == suit;
-            return true;
-        }
+            String followThisSuit = followCard.getSuit();
 
+            if (p1Hand[cardNum - 1].getSuit() == followThisSuit)
+                return true; // Want to play card of proper suit
+
+            foreach (Card card in p1RemainingCards)
+                if (card != null && card.getSuit() == followThisSuit)
+                    return false;
+
+            // Have no card of proper suit, allow play
+            return true; 
+        }
+        // Return true if player is allowed to play card
         public bool mayPlayCard(int cardNum)
         {
             if (playersTurn())
@@ -306,24 +272,21 @@ namespace poker
             return false;
         }
 
-        // end of rules
-
         public BitmapImage P1_Played
         {
             get
             {
                 if (playerPlayed[0] >= 0)
-                    return getImage(player1[playerPlayed[0]]);
+                    return getImage(p1Hand[playerPlayed[0]]);
                 return null;
             }
         }
-
         public BitmapImage P2_Played
         {
             get
             {
                 if (playerPlayed[1] >= 0)
-                    return getImage(player2[playerPlayed[1]]);
+                    return getImage(p2Hand[playerPlayed[1]]);
                 return null;
             }
         }
@@ -336,7 +299,6 @@ namespace poker
                 return null;
             }
         }
-
         public BitmapImage P4_Played
         {
             get
@@ -351,106 +313,101 @@ namespace poker
             get { return playerScore[0]; }
             set { playerScore[0] = value; OnPropertyChanged("P1_Score"); }
         }
-
         public int P2_Score
         {
             get { return playerScore[1]; }
             set { playerScore[1] = value; OnPropertyChanged("P2_Score"); }
         }
-
         public int P3_Score
         {
             get { return playerScore[2]; }
             set { playerScore[2] = value; OnPropertyChanged("P3_Score"); }
         }
-
         public int P4_Score
         {
             get { return playerScore[3]; }
             set { playerScore[3] = value; OnPropertyChanged("P4_Score"); }
         }
-
-        public BitmapImage P1_Card0
-        {
-            get { return getImage(player1[0]); }
-        }
         public BitmapImage P1_Card1
         {
-            get { return getImage(player1[1]); }
+            get { return getImage(p1Hand[0]); }
         }
         public BitmapImage P1_Card2
         {
-            get { return getImage(player1[2]); }
+            get { return getImage(p1Hand[1]); }
         }
         public BitmapImage P1_Card3
         {
-            get { return getImage(player1[3]); }
+            get { return getImage(p1Hand[2]); }
         }
         public BitmapImage P1_Card4
         {
-            get { return getImage(player1[4]); }
+            get { return getImage(p1Hand[3]); }
         }
-        public BitmapImage P2_Card0
+        public BitmapImage P1_Card5
         {
-            get { return getImageCompPlayer(player2[0]); }
+            get { return getImage(p1Hand[4]); }
         }
         public BitmapImage P2_Card1
         {
-            get { return getImageCompPlayer(player2[1]); }
+            get { return getImageCompPlayer(p2Hand[0]); }
         }
         public BitmapImage P2_Card2
         {
-            get { return getImageCompPlayer(player2[2]); }
+            get { return getImageCompPlayer(p2Hand[1]); }
         }
         public BitmapImage P2_Card3
         {
-            get { return getImageCompPlayer(player2[3]); }
+            get { return getImageCompPlayer(p2Hand[2]); }
         }
         public BitmapImage P2_Card4
         {
-            get { return getImageCompPlayer(player2[4]); }
+            get { return getImageCompPlayer(p2Hand[3]); }
         }
-        public BitmapImage P3_Card0
+        public BitmapImage P2_Card5
         {
-            get { return getImageCompPlayer(player3[0]); }
+            get { return getImageCompPlayer(p2Hand[4]); }
         }
         public BitmapImage P3_Card1
         {
-            get { return getImageCompPlayer(player3[1]); }
+            get { return getImageCompPlayer(player3[0]); }
         }
         public BitmapImage P3_Card2
         {
-            get { return getImageCompPlayer(player3[2]); }
+            get { return getImageCompPlayer(player3[1]); }
         }
         public BitmapImage P3_Card3
         {
-            get { return getImageCompPlayer(player3[3]); }
+            get { return getImageCompPlayer(player3[2]); }
         }
         public BitmapImage P3_Card4
         {
-            get { return getImageCompPlayer(player3[4]); }
+            get { return getImageCompPlayer(player3[3]); }
         }
-        public BitmapImage P4_Card0
+        public BitmapImage P3_Card5
         {
-            get { return getImageCompPlayer(player4[0]); }
+            get { return getImageCompPlayer(player3[4]); }
         }
         public BitmapImage P4_Card1
         {
-            get { return getImageCompPlayer(player4[1]); }
+            get { return getImageCompPlayer(player4[0]); }
         }
         public BitmapImage P4_Card2
         {
-            get { return getImageCompPlayer(player4[2]); }
+            get { return getImageCompPlayer(player4[1]); }
         }
         public BitmapImage P4_Card3
         {
-            get { return getImageCompPlayer(player4[3]); }
+            get { return getImageCompPlayer(player4[2]); }
         }
         public BitmapImage P4_Card4
         {
+            get { return getImageCompPlayer(player4[3]); }
+        }
+        public BitmapImage P4_Card5
+        {
             get { return getImageCompPlayer(player4[4]); }
         }
-
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name)
         {
@@ -462,3 +419,11 @@ namespace poker
         }
     }
 }
+//[ValueConversion(typeof(Card), typeof(BitmapImage)]
+//public class CardBitMapImageConverter : IValueConverter
+//{
+//    public object Convert(object value, Type targetType, object parameter, CultureInfoConverter culture)
+//    {
+
+//    }
+//}
