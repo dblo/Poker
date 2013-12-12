@@ -1,4 +1,5 @@
 *.suo
 poker/R*
-poker/bin
-poker/obj
+poker*/bin
+poker*/obj
+.gita*

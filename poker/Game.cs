@@ -33,7 +33,7 @@ namespace poker
         private int[] playerScore, playerPlayed;
         private System.Timers.Timer stickRoundPauseTimer;
         private Card followCard;
-        
+
         public Game()
         {
             deck = new Deck();
@@ -46,7 +46,7 @@ namespace poker
             cardsToSub = new Queue<int>();
             playerScore = new int[NUM_OF_PLAYERS];
             playerPlayed = new int[CARDS_PER_HAND];
-                
+
             // To store card backside at index 0
             cardImages = new BitmapImage[53];
             loadImages();
@@ -78,8 +78,6 @@ namespace poker
                 p2Hand[i] = deck.draw();
                 player3[i] = deck.draw();
                 player4[i] = deck.draw();
-                p1RemainingCards[i] = p1Hand[i];
-                p2RemainingCards[i] = p2Hand[i];
 
                 for (int j = 1; j <= NUM_OF_PLAYERS; j++)
                 {
@@ -120,7 +118,7 @@ namespace poker
             if (!roundOver())
             {
                 // Return card backside
-                 return cardImages[0];
+                return cardImages[0];
             }
             return getImage(card);
         }
@@ -173,6 +171,15 @@ namespace poker
                 OnPropertyChanged(s);
             }
             subRound++;
+
+            if (subsFinished())
+            {
+                for (int i = 0; i < CARDS_PER_HAND; i++)
+                {
+                    p1RemainingCards[i] = p1Hand[i];
+                    p2RemainingCards[i] = p2Hand[i];
+                }
+            }
         }
 
         public int getPlayedCard(int player)
@@ -192,7 +199,7 @@ namespace poker
 
         public void playCard(int cardNum)
         {
-            playerPlayed[PLAYER1] = cardNum-1;
+            playerPlayed[PLAYER1] = cardNum - 1;
             p1RemainingCards[cardNum - 1] = null;
             OnPropertyChanged("P1_Played");
             onPlayer++;
@@ -231,10 +238,10 @@ namespace poker
             playerPlayed[1]++;
             OnPropertyChanged("P" + 2.ToString() + "_Played");
 
-            if(firstPlayer > 1)
+            if (firstPlayer > 1)
                 onPlayer = 1;
         }
-        
+
         // Return true if no more substitutions are allowed
         public bool subsFinished()
         {
@@ -261,7 +268,7 @@ namespace poker
                     return false;
 
             // Have no card of proper suit, allow play
-            return true; 
+            return true;
         }
         // Return true if player is allowed to play card
         public bool mayPlayCard(int cardNum)
