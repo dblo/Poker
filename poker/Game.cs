@@ -19,7 +19,8 @@ namespace poker
                   NUM_OF_PLAYERS = 4,
                   PLAYER1 = 0,
                   PLAYER2 = 1,
-                  DEFAULT_TIMER = 1000;
+                  DEFAULT_TIMER = 1000,
+                  NONE = -1;
 
         private Deck deck;
         private Card[] p1Hand, p2Hand, player3, player4;
@@ -68,9 +69,8 @@ namespace poker
             lastPlayer = 4;
             firstPlayer = 1;
 
-            // Set no card played yet
             for (int j = 0; j < NUM_OF_PLAYERS; j++)
-                playerPlayed[j] = -1;
+                playerPlayed[j] = NONE;
 
             for (int i = 0; i < CARDS_PER_HAND; i++)
             {
@@ -247,15 +247,18 @@ namespace poker
         {
             return subRound > ALLOWED_SUBST;
         }
+
         public bool roundOver()
         {
             return stickRound > STICK_ROUNDS;
         }
+
         // Return true if it is the human players turn
         private bool playersTurn()
         {
             return onPlayer == 1;
         }
+
         private bool cardFollowsSuit(int cardNum)
         {
             String followThisSuit = followCard.getSuit();
@@ -270,6 +273,7 @@ namespace poker
             // Have no card of proper suit, allow play
             return true;
         }
+
         // Return true if player is allowed to play card
         public bool mayPlayCard(int cardNum)
         {

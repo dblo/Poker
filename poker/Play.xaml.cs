@@ -97,7 +97,7 @@ namespace poker
         }
 
         // Initiate cards substitution or start next round depending on game stage
-        private void pressSubBtn(object sender, RoutedEventArgs e)
+        private void pressBtn(object sender, RoutedEventArgs e)
         {
             int[] toSubCards = game.getCardsToSub();
             game.doSub();
