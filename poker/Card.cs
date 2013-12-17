@@ -16,9 +16,6 @@ namespace poker
         public Card(string _suit, int _number)
         {
             suit = _suit;
-
-            if(_number == 1)
-                number = 13;
             number = _number;
         }
 
@@ -27,14 +24,28 @@ namespace poker
             return suit + number.ToString();
         }
 
-        public bool sameSuit(Card comp)
+        private bool sameSuit(Card comp)
         {
             return this.suit == comp.suit;
         }
 
-        public bool isLower(Card comp)
+        private bool isLower(Card comp)
         {
+            if (this.number == 1)
+                return false;
+            if (comp.number == 1)
+                return true;
             return this.number < comp.number;
+        }
+
+        public static bool operator<(Card o1, Card o2)
+        {
+            return o1.sameSuit(o2) && o1.isLower(o2);
+        }
+
+        public static bool operator>(Card o1, Card o2)
+        {
+            return !(o1 < o2);
         }
 
         public string getSuit() { return suit; }

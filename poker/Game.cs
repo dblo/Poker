@@ -19,7 +19,7 @@ namespace poker
                   NUM_OF_PLAYERS = 4,
                   PLAYER1 = 0,
                   PLAYER2 = 1,
-                  DEFAULT_TIMER = 1000,
+                  DEFAULT_TIMER = 500,
                   NONE = -1,
                   STICK_POINTS = 3;
 
@@ -203,16 +203,13 @@ namespace poker
             Card p1 = p1Hand[playerPlayed[PLAYER1]],
                  p2 = p2Hand[playerPlayed[PLAYER2]];
 
-            if (!p1.sameSuit(p2))
-                return firstPlayer;
-
             if (firstPlayer == PLAYER1)
             {
-                if (p1.isLower(p2))
+                if (p1 < p2)
                     return PLAYER2;
                 return PLAYER1;
             }
-            if (p2.isLower(p1))
+            if (p2 < p1)
                 return PLAYER1;
             return PLAYER2;
         }
@@ -268,8 +265,28 @@ namespace poker
         // Computer players will play 1 card each if it's their turn
         private void compPlaySticks()
         {
-            playerPlayed[PLAYER2]++;
-            OnPropertyChanged("P" + 2.ToString() + "_Played");
+            int toPlay = 1;
+            foreach (Card card in p2RemainingCards)
+            {
+                if (card != null && (firstPlayer == PLAYER2 || card.getSuit() == followCard.getSuit()))
+                    break;
+                toPlay++;
+            }
+            
+            if(toPlay > CARDS_PER_HAND)
+            {
+                toPlay = 1;
+                foreach (Card card in p2RemainingCards)
+                {
+                    if (card != null)
+                        break;
+                    toPlay++;
+                }
+            }
+
+            p2RemainingCards[toPlay - 1] = null;
+            playerPlayed[PLAYER2] = toPlay-1;
+            OnPropertyChanged("P2_Played");
 
             if (firstPlayer == PLAYER2)
                 onPlayer = PLAYER1;
