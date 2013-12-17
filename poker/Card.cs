@@ -15,13 +15,26 @@ namespace poker
 
         public Card(string _suit, int _number)
         {
-            this.suit = _suit;
-            this.number = _number;
+            suit = _suit;
+
+            if(_number == 1)
+                number = 13;
+            number = _number;
         }
 
         public String toString()
         {
             return suit + number.ToString();
+        }
+
+        public bool sameSuit(Card comp)
+        {
+            return this.suit == comp.suit;
+        }
+
+        public bool isLower(Card comp)
+        {
+            return this.number < comp.number;
         }
 
         public string getSuit() { return suit; }

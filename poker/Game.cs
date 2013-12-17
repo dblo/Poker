@@ -20,7 +20,8 @@ namespace poker
                   PLAYER1 = 0,
                   PLAYER2 = 1,
                   DEFAULT_TIMER = 1000,
-                  NONE = -1;
+                  NONE = -1,
+                  STICK_POINTS = 3;
 
         private Deck deck;
         private Card[] p1Hand, p2Hand, player3, player4;
@@ -29,7 +30,7 @@ namespace poker
         private BitmapImage[] cardImages;
         private int subRound, stickRound,
             onPlayer, // Who's turn it is
-            lastPlayer, // Last player to play a card in a stick round
+            //lastPlayer, // Last player to play a card in a stick round
             firstPlayer; // Player who played the first card in a stick
         private int[] playerScore, playerPlayed;
         private System.Timers.Timer stickRoundPauseTimer;
@@ -65,9 +66,9 @@ namespace poker
         {
             deck.shuffle();
             subRound = stickRound = 1;
-            onPlayer = 1;
-            lastPlayer = 4;
-            firstPlayer = 1;
+            firstPlayer = PLAYER1;
+            onPlayer = firstPlayer;
+            //lastPlayer = 4;
 
             for (int j = 0; j < NUM_OF_PLAYERS; j++)
                 playerPlayed[j] = NONE;
@@ -197,6 +198,33 @@ namespace poker
                 }
         }
 
+        private int decideStickWinner()
+        {
+            Card p1 = p1Hand[playerPlayed[PLAYER1]],
+                 p2 = p2Hand[playerPlayed[PLAYER2]];
+
+            if (!p1.sameSuit(p2))
+                return firstPlayer;
+
+            if (firstPlayer == PLAYER1)
+            {
+                if (p1.isLower(p2))
+                    return PLAYER2;
+                return PLAYER1;
+            }
+            if (p2.isLower(p1))
+                return PLAYER1;
+            return PLAYER2;
+        }
+
+        private void awardRoundPoints(int winner)
+        {
+            if (winner == PLAYER1)
+                P1_Score = P1_Score + STICK_POINTS;
+            else
+                P2_Score = P2_Score + STICK_POINTS;
+        }
+
         public void playCard(int cardNum)
         {
             playerPlayed[PLAYER1] = cardNum - 1;
@@ -205,7 +233,7 @@ namespace poker
             onPlayer++;
 
             // New stickround has begun
-            if (firstPlayer == 1)
+            if (firstPlayer == PLAYER1)
             {
                 followCard = p1Hand[cardNum - 1];
                 compPlaySticks();
@@ -213,7 +241,11 @@ namespace poker
             stickRound++;
 
             if (roundOver())
+            {
                 showAllCompCards();
+                int roundWinner = decideStickWinner();
+                awardRoundPoints(roundWinner);
+            }
             else
                 stickRoundPauseTimer.Start();
         }
@@ -221,11 +253,12 @@ namespace poker
         private void OnTimedEvent(object source, ElapsedEventArgs e)
         {
             stickRoundPauseTimer.Stop();
-            onPlayer = 2;
-            firstPlayer = 2;
-            lastPlayer = 1;
 
-            if (firstPlayer > 1)
+            firstPlayer = decideStickWinner();
+            onPlayer = firstPlayer;
+            //lastPlayer = 2;
+
+            if (firstPlayer == PLAYER2)
             {
                 compPlaySticks();
                 followCard = p2Hand[playerPlayed[PLAYER2]];
@@ -235,11 +268,11 @@ namespace poker
         // Computer players will play 1 card each if it's their turn
         private void compPlaySticks()
         {
-            playerPlayed[1]++;
+            playerPlayed[PLAYER2]++;
             OnPropertyChanged("P" + 2.ToString() + "_Played");
 
-            if (firstPlayer > 1)
-                onPlayer = 1;
+            if (firstPlayer == PLAYER2)
+                onPlayer = PLAYER1;
         }
 
         // Return true if no more substitutions are allowed
@@ -256,7 +289,7 @@ namespace poker
         // Return true if it is the human players turn
         private bool playersTurn()
         {
-            return onPlayer == 1;
+            return onPlayer == PLAYER1;
         }
 
         private bool cardFollowsSuit(int cardNum)
@@ -278,7 +311,7 @@ namespace poker
         public bool mayPlayCard(int cardNum)
         {
             if (playersTurn())
-                if (firstPlayer == 1 || cardFollowsSuit(cardNum))
+                if (firstPlayer == PLAYER1 || cardFollowsSuit(cardNum))
                     return true;
             return false;
         }
@@ -322,11 +355,11 @@ namespace poker
         public int P1_Score
         {
             get { return playerScore[0]; }
-            set { playerScore[0] = value; OnPropertyChanged("P1_Score"); }
+            set { playerScore[PLAYER1] = value; OnPropertyChanged("P1_Score"); }
         }
         public int P2_Score
         {
-            get { return playerScore[1]; }
+            get { return playerScore[PLAYER2]; }
             set { playerScore[1] = value; OnPropertyChanged("P2_Score"); }
         }
         public int P3_Score
