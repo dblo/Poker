@@ -9,19 +9,22 @@ using System.Windows.Media.Imaging;
 using System.IO;
 using System.Timers;
 
+using System.Data.Entity;
+
 namespace poker
 {
     public class Game : INotifyPropertyChanged
     {
         private readonly int CARDS_PER_HAND = 5,
                   ALLOWED_SUBST = 2,
-                  STICK_ROUNDS = 5,
+                  STICK_ROUNDS  = 5,
                   NUM_OF_PLAYERS = 4,
-                  PLAYER1 = 0,
-                  PLAYER2 = 1,
-                  DEFAULT_TIMER = 500,
-                  NONE = -1,
-                  STICK_POINTS = 3;
+                  PLAYER1       = 0,
+                  PLAYER2       = 1,
+                  DEFAULT_TIMER = 500, // Time before next stick round begins
+                  NONE          = -1,
+                  STICK_POINTS  = 3,
+                  PLAYERID      = 1; // Used as id in db
 
         private Deck deck;
         private Card[] p1Hand, p2Hand, player3, player4;
@@ -34,7 +37,7 @@ namespace poker
             firstPlayer; // Player who played the first card in a stick
         private int[] playerScore, playerPlayed;
         private System.Timers.Timer stickRoundPauseTimer;
-        private Card followCard;
+        private Card followCard; // todo remove
 
         public Game()
         {
@@ -53,6 +56,84 @@ namespace poker
             cardImages = new BitmapImage[53];
             loadImages();
             setStickTimer(DEFAULT_TIMER);
+        }
+
+        private void loadGame()
+        {
+            using (var db = new recordsEntities())
+            {
+                var query = from e in db.GameSession
+                            where e.id == PLAYERID
+                            select e;
+                if (query.ToList().Count == 1)
+                {
+                    GameSession session = query.First();
+                    setSaveData(session);
+                }
+            }
+        }
+
+        // Save current game state to the database. Will replace save if one exists.
+        private void saveGame()
+        {
+            using (var db = new recordsEntities())
+            {
+                var query = from e in db.GameSession
+                        where e.id == PLAYERID
+                        select e;
+                if(query.ToList().Count == 1)
+                {
+                    GameSession session = query.First();
+                    setSaveData(session);
+                }
+                else
+                {
+                    GameSession session = new GameSession();
+                    setSaveData(session);
+                    db.GameSession.Add(session);
+                }
+                db.SaveChanges();
+
+                query = from b in db.GameSession
+                            select b;
+                Console.WriteLine("All sessions in the database:");
+                foreach (var item in query)
+                {
+                    Console.WriteLine("PK: " + item.id + " Score: " + item.p1score + " " + item.p2score
+                        + " " + item.p1hand);
+                }
+            }
+        }
+
+        private void setSaveData(GameSession session)
+        {
+            session.id              = PLAYERID;
+            session.p1score         = P1_Score;
+            session.p2score         = P2_Score;
+            session.p1hand          = cardsToString(p1Hand);
+            session.p2hand          = cardsToString(p2Hand);
+            session.p1remaining     = cardsToString(p1RemainingCards);
+            session.p2remaining     = cardsToString(p2RemainingCards);
+            session.p1played        = playerPlayed[PLAYER1];
+            session.p2played        = playerPlayed[PLAYER2];
+            session.first_player    = firstPlayer;
+            session.on_player       = onPlayer;
+            session.stick_round     = stickRound;
+            session.sub_round       = subRound;
+        }
+
+        // Represent a hand of cards as a string
+        private string cardsToString(Card[] cards)
+        {
+            string retVal = "";
+            foreach(Card card in cards)
+            {
+                if (card != null)
+                    retVal += card.toString();
+                else
+                    retVal += "-";
+            }
+            return retVal;
         }
 
         public void newGame()
@@ -181,6 +262,8 @@ namespace poker
                     p2RemainingCards[i] = p2Hand[i];
                 }
             }
+
+            saveGame();
         }
 
         public int getPlayedCard(int player)
@@ -272,8 +355,8 @@ namespace poker
                     break;
                 toPlay++;
             }
-            
-            if(toPlay > CARDS_PER_HAND)
+
+            if (toPlay > CARDS_PER_HAND)
             {
                 toPlay = 1;
                 foreach (Card card in p2RemainingCards)
@@ -285,7 +368,7 @@ namespace poker
             }
 
             p2RemainingCards[toPlay - 1] = null;
-            playerPlayed[PLAYER2] = toPlay-1;
+            playerPlayed[PLAYER2] = toPlay - 1;
             OnPropertyChanged("P2_Played");
 
             if (firstPlayer == PLAYER2)
@@ -351,24 +434,24 @@ namespace poker
                 return null;
             }
         }
-        public BitmapImage P3_Played
-        {
-            get
-            {
-                if (playerPlayed[2] >= 0)
-                    return getImage(player3[playerPlayed[2]]);
-                return null;
-            }
-        }
-        public BitmapImage P4_Played
-        {
-            get
-            {
-                if (playerPlayed[3] >= 0)
-                    return getImage(player4[playerPlayed[3]]);
-                return null;
-            }
-        }
+        //public BitmapImage P3_Played
+        //{
+        //    get
+        //    {
+        //        if (playerPlayed[2] >= 0)
+        //            return getImage(player3[playerPlayed[2]]);
+        //        return null;
+        //    }
+        //}
+        //public BitmapImage P4_Played
+        //{
+        //    get
+        //    {
+        //        if (playerPlayed[3] >= 0)
+        //            return getImage(player4[playerPlayed[3]]);
+        //        return null;
+        //    }
+        //}
         public int P1_Score
         {
             get { return playerScore[0]; }
@@ -379,16 +462,16 @@ namespace poker
             get { return playerScore[PLAYER2]; }
             set { playerScore[1] = value; OnPropertyChanged("P2_Score"); }
         }
-        public int P3_Score
-        {
-            get { return playerScore[2]; }
-            set { playerScore[2] = value; OnPropertyChanged("P3_Score"); }
-        }
-        public int P4_Score
-        {
-            get { return playerScore[3]; }
-            set { playerScore[3] = value; OnPropertyChanged("P4_Score"); }
-        }
+        //public int P3_Score
+        //{
+        //    get { return playerScore[2]; }
+        //    set { playerScore[2] = value; OnPropertyChanged("P3_Score"); }
+        //}
+        //public int P4_Score
+        //{
+        //    get { return playerScore[3]; }
+        //    set { playerScore[3] = value; OnPropertyChanged("P4_Score"); }
+        //}
         public BitmapImage P1_Card1
         {
             get { return getImage(p1Hand[0]); }
@@ -429,46 +512,46 @@ namespace poker
         {
             get { return getImageCompPlayer(p2Hand[4]); }
         }
-        public BitmapImage P3_Card1
-        {
-            get { return getImageCompPlayer(player3[0]); }
-        }
-        public BitmapImage P3_Card2
-        {
-            get { return getImageCompPlayer(player3[1]); }
-        }
-        public BitmapImage P3_Card3
-        {
-            get { return getImageCompPlayer(player3[2]); }
-        }
-        public BitmapImage P3_Card4
-        {
-            get { return getImageCompPlayer(player3[3]); }
-        }
-        public BitmapImage P3_Card5
-        {
-            get { return getImageCompPlayer(player3[4]); }
-        }
-        public BitmapImage P4_Card1
-        {
-            get { return getImageCompPlayer(player4[0]); }
-        }
-        public BitmapImage P4_Card2
-        {
-            get { return getImageCompPlayer(player4[1]); }
-        }
-        public BitmapImage P4_Card3
-        {
-            get { return getImageCompPlayer(player4[2]); }
-        }
-        public BitmapImage P4_Card4
-        {
-            get { return getImageCompPlayer(player4[3]); }
-        }
-        public BitmapImage P4_Card5
-        {
-            get { return getImageCompPlayer(player4[4]); }
-        }
+        //public BitmapImage P3_Card1
+        //{
+        //    get { return getImageCompPlayer(player3[0]); }
+        //}
+        //public BitmapImage P3_Card2
+        //{
+        //    get { return getImageCompPlayer(player3[1]); }
+        //}
+        //public BitmapImage P3_Card3
+        //{
+        //    get { return getImageCompPlayer(player3[2]); }
+        //}
+        //public BitmapImage P3_Card4
+        //{
+        //    get { return getImageCompPlayer(player3[3]); }
+        //}
+        //public BitmapImage P3_Card5
+        //{
+        //    get { return getImageCompPlayer(player3[4]); }
+        //}
+        //public BitmapImage P4_Card1
+        //{
+        //    get { return getImageCompPlayer(player4[0]); }
+        //}
+        //public BitmapImage P4_Card2
+        //{
+        //    get { return getImageCompPlayer(player4[1]); }
+        //}
+        //public BitmapImage P4_Card3
+        //{
+        //    get { return getImageCompPlayer(player4[2]); }
+        //}
+        //public BitmapImage P4_Card4
+        //{
+        //    get { return getImageCompPlayer(player4[3]); }
+        //}
+        //public BitmapImage P4_Card5
+        //{
+        //    get { return getImageCompPlayer(player4[4]); }
+        //}
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name)
         {
@@ -480,11 +563,3 @@ namespace poker
         }
     }
 }
-//[ValueConversion(typeof(Card), typeof(BitmapImage)]
-//public class CardBitMapImageConverter : IValueConverter
-//{
-//    public object Convert(object value, Type targetType, object parameter, CultureInfoConverter culture)
-//    {
-
-//    }
-//}
