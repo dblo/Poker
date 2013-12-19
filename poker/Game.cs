@@ -17,14 +17,14 @@ namespace poker
     {
         private readonly int CARDS_PER_HAND = 5,
                   ALLOWED_SUBST = 2,
-                  STICK_ROUNDS  = 5,
+                  STICK_ROUNDS = 5,
                   NUM_OF_PLAYERS = 4,
-                  PLAYER1       = 0,
-                  PLAYER2       = 1,
+                  PLAYER1 = 0,
+                  PLAYER2 = 1,
                   DEFAULT_TIMER = 500, // Time before next stick round begins
-                  NONE          = -1,
-                  STICK_POINTS  = 3,
-                  PLAYERID      = 1; // Used as id in db
+                  NONE = -1,
+                  STICK_POINTS = 3,
+                  PLAYERID = 1; // Used as id in db
 
         private Deck deck;
         private Card[] p1Hand, p2Hand, player3, player4;
@@ -38,6 +38,8 @@ namespace poker
         private int[] playerScore, playerPlayed;
         private System.Timers.Timer stickRoundPauseTimer;
         private Card followCard; // todo remove
+        // This array is used when converting a string into the cards it represents
+        private static readonly char[] cardBeginnings = { 'h', 's', 'd', 'c', '-' };
 
         public Game()
         {
@@ -58,7 +60,8 @@ namespace poker
             setStickTimer(DEFAULT_TIMER);
         }
 
-        private void loadGame()
+        // Load game if there exists a save
+        public void loadGame()
         {
             using (var db = new recordsEntities())
             {
@@ -68,20 +71,21 @@ namespace poker
                 if (query.ToList().Count == 1)
                 {
                     GameSession session = query.First();
-                    setSaveData(session);
+                    loadData(session);
+                    notifyCardsChanged();
                 }
             }
         }
 
         // Save current game state to the database. Will replace save if one exists.
-        private void saveGame()
+        public void saveGame()
         {
             using (var db = new recordsEntities())
             {
                 var query = from e in db.GameSession
-                        where e.id == PLAYERID
-                        select e;
-                if(query.ToList().Count == 1)
+                            where e.id == PLAYERID
+                            select e;
+                if (query.ToList().Count == 1)
                 {
                     GameSession session = query.First();
                     setSaveData(session);
@@ -95,41 +99,85 @@ namespace poker
                 db.SaveChanges();
 
                 query = from b in db.GameSession
-                            select b;
-                Console.WriteLine("All sessions in the database:");
-                foreach (var item in query)
-                {
-                    Console.WriteLine("PK: " + item.id + " Score: " + item.p1score + " " + item.p2score
-                        + " " + item.p1hand);
-                }
+                        select b;
+                //Console.WriteLine("All sessions in the database:");
+                //foreach (var item in query)
+                //{
+                //    Console.WriteLine("PK: " + item.id + " Score: " + item.p1score + " " + item.p2score
+                //        + " " + item.p1hand);
+                //}
             }
         }
 
         private void setSaveData(GameSession session)
         {
-            session.id              = PLAYERID;
-            session.p1score         = P1_Score;
-            session.p2score         = P2_Score;
-            session.p1hand          = cardsToString(p1Hand);
-            session.p2hand          = cardsToString(p2Hand);
-            session.p1remaining     = cardsToString(p1RemainingCards);
-            session.p2remaining     = cardsToString(p2RemainingCards);
-            session.p1played        = playerPlayed[PLAYER1];
-            session.p2played        = playerPlayed[PLAYER2];
-            session.first_player    = firstPlayer;
-            session.on_player       = onPlayer;
-            session.stick_round     = stickRound;
-            session.sub_round       = subRound;
+            session.id = PLAYERID;
+            session.p1score = P1_Score;
+            session.p2score = P2_Score;
+            session.p1hand = cardsToString(p1Hand);
+            session.p2hand = cardsToString(p2Hand);
+            session.p1remaining = cardsToString(p1RemainingCards);
+            session.p2remaining = cardsToString(p2RemainingCards);
+            session.p1played = playerPlayed[PLAYER1];
+            session.p2played = playerPlayed[PLAYER2];
+            session.first_player = firstPlayer;
+            session.on_player = onPlayer;
+            session.stick_round = stickRound;
+            session.sub_round = subRound;
+        }
+
+        private void loadData(GameSession session)
+        {
+            P1_Score = (int)session.p1score;
+            P2_Score = (int)session.p2score;
+            stringToCards(p1Hand, session.p1hand);
+            //stringToCards(p2Hand, session.p2hand);
+            //stringToCards(p1RemainingCards, session.p1remaining);
+            //stringToCards(p2RemainingCards, session.p2remaining);
+            playerPlayed[PLAYER1] = (int)session.p1played;
+            playerPlayed[PLAYER2] = (int)session.p2played;
+            firstPlayer = (int)session.first_player;
+            onPlayer = (int)session.on_player;
+            stickRound = (int)session.stick_round;
+            subRound = (int)session.sub_round;
+        }
+
+        private void stringToCards(Card[] cards, string cardStr)
+        {
+            foreach (Card c in p1Hand)
+                Console.WriteLine(c.ToString());
+
+            int begin = 0;
+            for (int i = 0; i < 5; i++)
+            {
+                if (cardStr[begin] == '-')
+                {
+                    cards[i] = null;
+                    begin++;
+                }
+                else
+                {
+                    int len = 1;
+                    for (int j = begin + 1; j < cardStr.Length && !cardBeginnings.Contains(cardStr[j]); j++)
+                        len++;
+
+                    string nextCard = cardStr.Substring(begin, len);
+                    //Console.WriteLine(nextCard);
+                    cards[i] = deck.getCardByString(nextCard);
+                    //+ cards[i].toString());
+                    begin += len;
+                }
+            }
         }
 
         // Represent a hand of cards as a string
         private string cardsToString(Card[] cards)
         {
             string retVal = "";
-            foreach(Card card in cards)
+            foreach (Card card in cards)
             {
                 if (card != null)
-                    retVal += card.toString();
+                    retVal += card.ToString();
                 else
                     retVal += "-";
             }
@@ -160,18 +208,19 @@ namespace poker
                 p2Hand[i] = deck.draw();
                 player3[i] = deck.draw();
                 player4[i] = deck.draw();
+            }
+            notifyCardsChanged();
+        }
 
-                for (int j = 1; j <= NUM_OF_PLAYERS; j++)
+        private void notifyCardsChanged()
+        {
+            for (int j = 1; j <= NUM_OF_PLAYERS; j++)
+            {
+                for (int i = 0; i < CARDS_PER_HAND; i++)
                 {
-                    // Notify gui to show new cards
                     string card = "P" + j.ToString() + "_Card" + (i + 1).ToString();
                     OnPropertyChanged(card);
                 }
-            }
-
-            for (int j = 1; j <= NUM_OF_PLAYERS; j++)
-            {
-                // Notify gui to remove old played cards
                 string s = "P" + j.ToString() + "_Played";
                 OnPropertyChanged(s);
             }
@@ -189,7 +238,7 @@ namespace poker
             for (int i = 1; i < 53; i++)
             {
                 Card card = deck.getCardByIndex(i - 1);
-                cardImages[i] = new BitmapImage(new Uri("Media/" + card.toString() + ".png", UriKind.Relative));
+                cardImages[i] = new BitmapImage(new Uri("Media/" + card.ToString() + ".png", UriKind.Relative));
             }
         }
 
@@ -262,8 +311,6 @@ namespace poker
                     p2RemainingCards[i] = p2Hand[i];
                 }
             }
-
-            saveGame();
         }
 
         public int getPlayedCard(int player)

@@ -127,5 +127,15 @@ namespace poker
                 }
             }
         }
+
+        private void pressSaveBtn(object sender, RoutedEventArgs e)
+        {
+            game.saveGame();
+        }
+
+        private void pressLoadBtn(object sender, RoutedEventArgs e)
+        {
+            game.loadGame();
+        }
     }
 }

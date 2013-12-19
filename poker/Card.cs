@@ -19,7 +19,7 @@ namespace poker
             number = _number;
         }
 
-        public String toString()
+        public override String ToString()
         {
             return suit + number.ToString();
         }

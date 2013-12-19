@@ -34,6 +34,15 @@ namespace poker
             return cards[index];
         }
 
+        public Card getCardByString(string str)
+        {
+            int i=0;
+            while (i < 51 && cards[i].ToString() != str)
+                i++;
+            Console.WriteLine(i + " " + cards[i].ToString() + " vs " + str);
+            return cards[i];
+        }
+
         // Returns 1 card
         public Card draw()
         {
