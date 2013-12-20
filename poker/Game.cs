@@ -39,7 +39,7 @@ namespace poker
         private System.Timers.Timer stickRoundPauseTimer;
         private Card followCard; // todo remove
         // This array is used when converting a string into the cards it represents
-        private static readonly char[] cardBeginnings = { 'h', 's', 'd', 'c', '-' };
+        private static readonly char[] cardBeginnings = { 'h', 's', 'd', 'c', '-', ' ' };
 
         public Game()
         {
@@ -68,13 +68,40 @@ namespace poker
                 var query = from e in db.GameSession
                             where e.id == PLAYERID
                             select e;
+
                 if (query.ToList().Count == 1)
                 {
                     GameSession session = query.First();
                     loadData(session);
                     notifyCardsChanged();
+                    cardsToSub.Clear();
+
+                    if (firstPlayer == PLAYER2)
+                        stickRoundPauseTimer.Start();
+                }
+
+                query = from b in db.GameSession
+                        where b.id == PLAYERID
+                        select b;
+                foreach (var item in query)
+                {
+                    Console.WriteLine("Session: " + item.id + 
+                        item.p1score + " " + item.p2score + " " +
+                        item.p1hand + " " + item.p2hand + " " +
+                        item.p1remaining + " " + item.p2remaining + " " +
+                        item.p1played + " " + item.p2played + " " +
+                        item.first_player + " " + item.on_player + " " +
+                        item.stick_round + " " + item.sub_round);
                 }
             }
+        }
+
+        public bool cardHasBeenPlayed(int player, int card)
+        {
+            if (player == 1)
+                return p1RemainingCards[card - 1] == null;
+            else
+                return p2RemainingCards[card - 1] == null;
         }
 
         // Save current game state to the database. Will replace save if one exists.
@@ -99,13 +126,18 @@ namespace poker
                 db.SaveChanges();
 
                 query = from b in db.GameSession
+                        where b.id == PLAYERID
                         select b;
-                //Console.WriteLine("All sessions in the database:");
-                //foreach (var item in query)
-                //{
-                //    Console.WriteLine("PK: " + item.id + " Score: " + item.p1score + " " + item.p2score
-                //        + " " + item.p1hand);
-                //}
+                foreach (var item in query)
+                {
+                    Console.WriteLine("Session: " + item.id +
+                        item.p1score + " " + item.p2score + " " +
+                        item.p1hand + " " + item.p2hand + " " +
+                        item.p1remaining + " " + item.p2remaining + " " +
+                        item.p1played + " " + item.p2played + " " +
+                        item.first_player + " " + item.on_player + " " +
+                        item.stick_round + " " + item.sub_round);
+                }
             }
         }
 
@@ -131,9 +163,9 @@ namespace poker
             P1_Score = (int)session.p1score;
             P2_Score = (int)session.p2score;
             stringToCards(p1Hand, session.p1hand);
-            //stringToCards(p2Hand, session.p2hand);
-            //stringToCards(p1RemainingCards, session.p1remaining);
-            //stringToCards(p2RemainingCards, session.p2remaining);
+            stringToCards(p2Hand, session.p2hand);
+            stringToCards(p1RemainingCards, session.p1remaining);
+            stringToCards(p2RemainingCards, session.p2remaining);
             playerPlayed[PLAYER1] = (int)session.p1played;
             playerPlayed[PLAYER2] = (int)session.p2played;
             firstPlayer = (int)session.first_player;
@@ -144,9 +176,6 @@ namespace poker
 
         private void stringToCards(Card[] cards, string cardStr)
         {
-            foreach (Card c in p1Hand)
-                Console.WriteLine(c.ToString());
-
             int begin = 0;
             for (int i = 0; i < 5; i++)
             {
@@ -162,12 +191,13 @@ namespace poker
                         len++;
 
                     string nextCard = cardStr.Substring(begin, len);
-                    //Console.WriteLine(nextCard);
+                    //Console.WriteLine("Find next: " + nextCard);
                     cards[i] = deck.getCardByString(nextCard);
-                    //+ cards[i].toString());
                     begin += len;
                 }
             }
+            //foreach (Card c in p1Hand)
+            //    Console.WriteLine(c.ToString());
         }
 
         // Represent a hand of cards as a string

@@ -102,19 +102,11 @@ namespace poker
         // Initiate cards substitution or start next round depending on game stage
         private void pressBtn(object sender, RoutedEventArgs e)
         {
-            int[] toSubCards = game.getCardsToSub();
+            setOpaqueCards();
             game.doSub();
-
-            foreach (int subbedCard in toSubCards)
-            {
-                Image subbedImage = FindName("p1card" + subbedCard.ToString()) as Image;
-                subbedImage.Opacity = 1;
-            }
-
             if (game.subsFinished())
             {
-                Button btn = e.Source as Button;
-
+                Button btn = FindName("controlBtn") as Button;
                 if (game.roundOver())
                 {
                     game.newRound();
@@ -127,6 +119,16 @@ namespace poker
                 }
             }
         }
+        
+        private void setOpaqueCards()
+        {
+            int[] toSubCards = game.getCardsToSub();
+            foreach (int subbedCard in toSubCards)
+            {
+                Image subbedImage = FindName("p1card" + subbedCard.ToString()) as Image;
+                subbedImage.Opacity = 1;
+            }
+        }
 
         private void pressSaveBtn(object sender, RoutedEventArgs e)
         {
@@ -135,7 +137,42 @@ namespace poker
 
         private void pressLoadBtn(object sender, RoutedEventArgs e)
         {
+            setOpaqueCards();
             game.loadGame();
+
+            if (game.subsFinished())
+            {
+                Image cardImg;
+                for (int i = 1; i < 3; i++)
+                    for (int j = 1; j <= 5; j++)
+                    {
+                        cardImg = FindName("p" + i.ToString() +
+                            "card" + j.ToString()) as Image;
+                        if (game.cardHasBeenPlayed(i, j))
+                            cardImg.Visibility = Visibility.Hidden;
+                        else
+                            cardImg.Visibility = Visibility.Visible;
+                    }
+
+                Button btn = FindName("controlBtn") as Button;
+                if (game.roundOver())
+                {
+                    makeCardsVisible();
+                    btn.Content = "Next";
+                    btn.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    btn.Visibility = Visibility.Hidden;
+                }
+            }
+            else
+            {
+                makeCardsVisible();
+                Button btn = FindName("controlBtn") as Button;
+                btn.Content = "Sub";
+                btn.Visibility = Visibility.Visible;
+            }
         }
     }
 }
