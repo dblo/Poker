@@ -80,19 +80,19 @@ namespace poker
                         stickRoundPauseTimer.Start();
                 }
 
-                query = from b in db.GameSession
-                        where b.id == PLAYERID
-                        select b;
-                foreach (var item in query)
-                {
-                    Console.WriteLine("Session: " + item.id + 
-                        item.p1score + " " + item.p2score + " " +
-                        item.p1hand + " " + item.p2hand + " " +
-                        item.p1remaining + " " + item.p2remaining + " " +
-                        item.p1played + " " + item.p2played + " " +
-                        item.first_player + " " + item.on_player + " " +
-                        item.stick_round + " " + item.sub_round);
-                }
+                //query = from b in db.GameSession
+                //        where b.id == PLAYERID
+                //        select b;
+                //foreach (var item in query)
+                //{
+                //    Console.WriteLine("Session: " + item.id + 
+                //        item.p1score + " " + item.p2score + " " +
+                //        item.p1hand + " " + item.p2hand + " " +
+                //        item.p1remaining + " " + item.p2remaining + " " +
+                //        item.p1played + " " + item.p2played + " " +
+                //        item.first_player + " " + item.on_player + " " +
+                //        item.stick_round + " " + item.sub_round);
+                //}
             }
         }
 
@@ -124,20 +124,19 @@ namespace poker
                     db.GameSession.Add(session);
                 }
                 db.SaveChanges();
-
-                query = from b in db.GameSession
-                        where b.id == PLAYERID
-                        select b;
-                foreach (var item in query)
-                {
-                    Console.WriteLine("Session: " + item.id +
-                        item.p1score + " " + item.p2score + " " +
-                        item.p1hand + " " + item.p2hand + " " +
-                        item.p1remaining + " " + item.p2remaining + " " +
-                        item.p1played + " " + item.p2played + " " +
-                        item.first_player + " " + item.on_player + " " +
-                        item.stick_round + " " + item.sub_round);
-                }
+                //query = from b in db.GameSession
+                //        where b.id == PLAYERID
+                //        select b;
+                //foreach (var item in query)
+                //{
+                //    Console.WriteLine("Session: " + item.id +
+                //        item.p1score + " " + item.p2score + " " +
+                //        item.p1hand + " " + item.p2hand + " " +
+                //        item.p1remaining + " " + item.p2remaining + " " +
+                //        item.p1played + " " + item.p2played + " " +
+                //        item.first_player + " " + item.on_player + " " +
+                //        item.stick_round + " " + item.sub_round);
+                //}
             }
         }
 

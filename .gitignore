@@ -3,3 +3,6 @@ poker/R*
 poker*/bin
 poker*/obj
 .gita*
+packages/*
+*user*
+*.config

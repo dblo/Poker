@@ -16,7 +16,7 @@ namespace poker
     public partial class recordsEntities : DbContext
     {
         public recordsEntities()
-            : base("name=recordsEntities2")
+            : base("name=recordsEntities")
         {
         }
     
