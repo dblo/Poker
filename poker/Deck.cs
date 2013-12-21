@@ -39,8 +39,6 @@ namespace poker
             int i=0;
             while (cards[i].ToString() != str)
                 i++;
-
-            //Console.WriteLine("Found: " + cards[i].ToString());
             return cards[i];
         }
 
