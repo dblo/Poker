@@ -13,10 +13,10 @@ namespace poker
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
     
-    public partial class recordsEntities : DbContext
+    public partial class PokerDbEntities : DbContext
     {
-        public recordsEntities()
-            : base("name=recordsEntities")
+        public PokerDbEntities()
+            : base("name=PokerDbEntities")
         {
         }
     

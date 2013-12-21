@@ -63,7 +63,7 @@ namespace poker
         // Load game if there exists a save
         public void loadGame()
         {
-            using (var db = new recordsEntities())
+            using (var db = new PokerDbEntities())
             {
                 var query = from e in db.GameSession
                             where e.id == PLAYERID
@@ -107,12 +107,12 @@ namespace poker
         // Save current game state to the database. Will replace save if one exists.
         public void saveGame()
         {
-            using (var db = new recordsEntities())
+            using (var db = new PokerDbEntities())
             {
                 var query = from e in db.GameSession
                             where e.id == PLAYERID
                             select e;
-                if (query.ToList().Count == 1)
+                if (query.ToList().Count > 0)
                 {
                     GameSession session = query.First();
                     setSaveData(session);
