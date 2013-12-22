@@ -8,32 +8,32 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.IO;
 using System.Timers;
-
 using System.Data.Entity;
+
+// In this code the word "stick" is used to indicate 1 round of all players playing 1 card
 
 namespace poker
 {
     public class Game : INotifyPropertyChanged
     {
-        private readonly int CARDS_PER_HAND = 5,
+        public readonly int CARDS_PER_HAND = 5,
                   ALLOWED_SUBST = 2,
                   STICK_ROUNDS = 5,
-                  NUM_OF_PLAYERS = 4,
+                  NUM_OF_PLAYERS = 2,
                   PLAYER1 = 0,
                   PLAYER2 = 1,
-                  DEFAULT_TIMER = 500, // Time before next stick round begins
+                  WAIT_TIME = 500, // Time between stick-rounds
                   NONE = -1,
-                  STICK_POINTS = 3,
-                  PLAYERID = 1; // Used as id in db
+                  STICK_POINTS = 3, // Points awarded for winning 1 stick
+                  PLAYERID = 1; // Used as id for interacting with the database
 
         private Deck deck;
-        private Card[] p1Hand, p2Hand, player3, player4;
+        private Card[] p1Hand, p2Hand;
         private Card[] p1RemainingCards, p2RemainingCards;
         private Queue<int> cardsToSub;
         private BitmapImage[] cardImages;
         private int subRound, stickRound,
             onPlayer, // Who's turn it is
-            //lastPlayer, // Last player to play a card in a stick round
             firstPlayer; // Player who played the first card in a stick
         private int[] playerScore, playerPlayed;
         private System.Timers.Timer stickRoundPauseTimer;
@@ -46,18 +46,16 @@ namespace poker
             deck = new Deck();
             p1Hand = new Card[CARDS_PER_HAND];
             p2Hand = new Card[CARDS_PER_HAND];
-            player3 = new Card[CARDS_PER_HAND];
-            player4 = new Card[CARDS_PER_HAND];
             p1RemainingCards = new Card[CARDS_PER_HAND];
             p2RemainingCards = new Card[CARDS_PER_HAND];
             cardsToSub = new Queue<int>();
             playerScore = new int[NUM_OF_PLAYERS];
             playerPlayed = new int[CARDS_PER_HAND];
 
-            // To store card backside at index 0
+            // Card backside at index 0
             cardImages = new BitmapImage[53];
             loadImages();
-            setStickTimer(DEFAULT_TIMER);
+            setStickTimer(WAIT_TIME);
         }
 
         // Load game if there exists a save
@@ -69,7 +67,7 @@ namespace poker
                             where e.id == PLAYERID
                             select e;
 
-                if (query.ToList().Count == 1)
+                if (query.Any())
                 {
                     GameSession session = query.First();
                     loadData(session);
@@ -77,22 +75,10 @@ namespace poker
                     cardsToSub.Clear();
 
                     if (firstPlayer == PLAYER2)
+                    {
                         stickRoundPauseTimer.Start();
+                    }
                 }
-
-                //query = from b in db.GameSession
-                //        where b.id == PLAYERID
-                //        select b;
-                //foreach (var item in query)
-                //{
-                //    Console.WriteLine("Session: " + item.id + 
-                //        item.p1score + " " + item.p2score + " " +
-                //        item.p1hand + " " + item.p2hand + " " +
-                //        item.p1remaining + " " + item.p2remaining + " " +
-                //        item.p1played + " " + item.p2played + " " +
-                //        item.first_player + " " + item.on_player + " " +
-                //        item.stick_round + " " + item.sub_round);
-                //}
             }
         }
 
@@ -112,7 +98,7 @@ namespace poker
                 var query = from e in db.GameSession
                             where e.id == PLAYERID
                             select e;
-                if (query.ToList().Count > 0)
+                if (query.Any())
                 {
                     GameSession session = query.First();
                     setSaveData(session);
@@ -124,37 +110,24 @@ namespace poker
                     db.GameSession.Add(session);
                 }
                 db.SaveChanges();
-                //query = from b in db.GameSession
-                //        where b.id == PLAYERID
-                //        select b;
-                //foreach (var item in query)
-                //{
-                //    Console.WriteLine("Session: " + item.id +
-                //        item.p1score + " " + item.p2score + " " +
-                //        item.p1hand + " " + item.p2hand + " " +
-                //        item.p1remaining + " " + item.p2remaining + " " +
-                //        item.p1played + " " + item.p2played + " " +
-                //        item.first_player + " " + item.on_player + " " +
-                //        item.stick_round + " " + item.sub_round);
-                //}
             }
         }
 
         private void setSaveData(GameSession session)
         {
-            session.id = PLAYERID;
-            session.p1score = P1_Score;
-            session.p2score = P2_Score;
-            session.p1hand = cardsToString(p1Hand);
-            session.p2hand = cardsToString(p2Hand);
+            session.id          = PLAYERID;
+            session.p1score     = P1_Score;
+            session.p2score     = P2_Score;
+            session.p1hand      = cardsToString(p1Hand);
+            session.p2hand      = cardsToString(p2Hand);
             session.p1remaining = cardsToString(p1RemainingCards);
             session.p2remaining = cardsToString(p2RemainingCards);
-            session.p1played = playerPlayed[PLAYER1];
-            session.p2played = playerPlayed[PLAYER2];
+            session.p1played    = playerPlayed[PLAYER1];
+            session.p2played    = playerPlayed[PLAYER2];
             session.first_player = firstPlayer;
-            session.on_player = onPlayer;
+            session.on_player   = onPlayer;
             session.stick_round = stickRound;
-            session.sub_round = subRound;
+            session.sub_round   = subRound;
         }
 
         private void loadData(GameSession session)
@@ -168,11 +141,12 @@ namespace poker
             playerPlayed[PLAYER1] = (int)session.p1played;
             playerPlayed[PLAYER2] = (int)session.p2played;
             firstPlayer = (int)session.first_player;
-            onPlayer = (int)session.on_player;
-            stickRound = (int)session.stick_round;
-            subRound = (int)session.sub_round;
+            onPlayer    = (int)session.on_player;
+            stickRound  = (int)session.stick_round;
+            subRound    = (int)session.sub_round;
         }
 
+        // Set up card references in param cards for hand represented in param cardStr
         private void stringToCards(Card[] cards, string cardStr)
         {
             int begin = 0;
@@ -186,17 +160,15 @@ namespace poker
                 else
                 {
                     int len = 1;
-                    for (int j = begin + 1; j < cardStr.Length && !cardBeginnings.Contains(cardStr[j]); j++)
+                    for (int j = begin + 1; j < cardStr.Length && 
+                        !cardBeginnings.Contains(cardStr[j]); j++)
                         len++;
 
                     string nextCard = cardStr.Substring(begin, len);
-                    //Console.WriteLine("Find next: " + nextCard);
                     cards[i] = deck.getCardByString(nextCard);
                     begin += len;
                 }
             }
-            //foreach (Card c in p1Hand)
-            //    Console.WriteLine(c.ToString());
         }
 
         // Represent a hand of cards as a string
@@ -226,7 +198,6 @@ namespace poker
             subRound = stickRound = 1;
             firstPlayer = PLAYER1;
             onPlayer = firstPlayer;
-            //lastPlayer = 4;
 
             for (int j = 0; j < NUM_OF_PLAYERS; j++)
                 playerPlayed[j] = NONE;
@@ -235,8 +206,6 @@ namespace poker
             {
                 p1Hand[i] = deck.draw();
                 p2Hand[i] = deck.draw();
-                player3[i] = deck.draw();
-                player4[i] = deck.draw();
             }
             notifyCardsChanged();
         }
@@ -245,9 +214,9 @@ namespace poker
         {
             for (int j = 1; j <= NUM_OF_PLAYERS; j++)
             {
-                for (int i = 0; i < CARDS_PER_HAND; i++)
+                for (int i = 1; i <= CARDS_PER_HAND; i++)
                 {
-                    string card = "P" + j.ToString() + "_Card" + (i + 1).ToString();
+                    string card = "P" + j.ToString() + "_Card" + i.ToString();
                     OnPropertyChanged(card);
                 }
                 string s = "P" + j.ToString() + "_Played";
@@ -322,7 +291,7 @@ namespace poker
         // Replace all substituted cards by drawing new ones and ask gui to update
         public void doSub()
         {
-            while (cardsToSub.Count() > 0)
+            while (cardsToSub.Any())
             {
                 int cardIndex = cardsToSub.Dequeue() - 1;
                 p1Hand[cardIndex] = deck.draw();
@@ -344,7 +313,7 @@ namespace poker
 
         public int getPlayedCard(int player)
         {
-            return playerPlayed[player - 1] + 1;
+            return playerPlayed[player] + 1;
         }
 
         private void showAllCompCards()
@@ -412,7 +381,6 @@ namespace poker
 
             firstPlayer = decideStickWinner();
             onPlayer = firstPlayer;
-            //lastPlayer = 2;
 
             if (firstPlayer == PLAYER2)
             {
@@ -421,7 +389,6 @@ namespace poker
             }
         }
 
-        // Computer players will play 1 card each if it's their turn
         private void compPlaySticks()
         {
             int toPlay = 1;
@@ -442,7 +409,6 @@ namespace poker
                     toPlay++;
                 }
             }
-
             p2RemainingCards[toPlay - 1] = null;
             playerPlayed[PLAYER2] = toPlay - 1;
             OnPropertyChanged("P2_Played");
@@ -510,24 +476,6 @@ namespace poker
                 return null;
             }
         }
-        //public BitmapImage P3_Played
-        //{
-        //    get
-        //    {
-        //        if (playerPlayed[2] >= 0)
-        //            return getImage(player3[playerPlayed[2]]);
-        //        return null;
-        //    }
-        //}
-        //public BitmapImage P4_Played
-        //{
-        //    get
-        //    {
-        //        if (playerPlayed[3] >= 0)
-        //            return getImage(player4[playerPlayed[3]]);
-        //        return null;
-        //    }
-        //}
         public int P1_Score
         {
             get { return playerScore[0]; }
@@ -538,16 +486,6 @@ namespace poker
             get { return playerScore[PLAYER2]; }
             set { playerScore[1] = value; OnPropertyChanged("P2_Score"); }
         }
-        //public int P3_Score
-        //{
-        //    get { return playerScore[2]; }
-        //    set { playerScore[2] = value; OnPropertyChanged("P3_Score"); }
-        //}
-        //public int P4_Score
-        //{
-        //    get { return playerScore[3]; }
-        //    set { playerScore[3] = value; OnPropertyChanged("P4_Score"); }
-        //}
         public BitmapImage P1_Card1
         {
             get { return getImage(p1Hand[0]); }
@@ -588,46 +526,6 @@ namespace poker
         {
             get { return getImageCompPlayer(p2Hand[4]); }
         }
-        //public BitmapImage P3_Card1
-        //{
-        //    get { return getImageCompPlayer(player3[0]); }
-        //}
-        //public BitmapImage P3_Card2
-        //{
-        //    get { return getImageCompPlayer(player3[1]); }
-        //}
-        //public BitmapImage P3_Card3
-        //{
-        //    get { return getImageCompPlayer(player3[2]); }
-        //}
-        //public BitmapImage P3_Card4
-        //{
-        //    get { return getImageCompPlayer(player3[3]); }
-        //}
-        //public BitmapImage P3_Card5
-        //{
-        //    get { return getImageCompPlayer(player3[4]); }
-        //}
-        //public BitmapImage P4_Card1
-        //{
-        //    get { return getImageCompPlayer(player4[0]); }
-        //}
-        //public BitmapImage P4_Card2
-        //{
-        //    get { return getImageCompPlayer(player4[1]); }
-        //}
-        //public BitmapImage P4_Card3
-        //{
-        //    get { return getImageCompPlayer(player4[2]); }
-        //}
-        //public BitmapImage P4_Card4
-        //{
-        //    get { return getImageCompPlayer(player4[3]); }
-        //}
-        //public BitmapImage P4_Card5
-        //{
-        //    get { return getImageCompPlayer(player4[4]); }
-        //}
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string name)
         {

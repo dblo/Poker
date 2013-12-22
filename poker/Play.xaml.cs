@@ -13,9 +13,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Data.Entity;
-
-using System.ComponentModel;
 
 namespace poker
 {
@@ -37,25 +34,21 @@ namespace poker
             DataContext = game;
         }
 
-        //Hide cards played by computer opponents
+        //Hide cards played by computer opponent
         private void hideCompPlayedCards()
         {
             Image playedCardImg;
-            for (int i = 2; i <= 2; i++) //todo limited to 2p
-            {
-                string s = "p" + i.ToString() + "card" +
-                    game.getPlayedCard(i).ToString();
-                playedCardImg = FindName(s) as Image;
-                playedCardImg.Visibility = Visibility.Hidden;
-            }
+            string s = "p2card" + game.getPlayedCard(game.PLAYER2).ToString();
+            playedCardImg = FindName(s) as Image;
+            playedCardImg.Visibility = Visibility.Hidden;
         }
 
-        // Make images containing cards in hands visible for showdown at tend of round
+        // Make images containing cards in hands visible for showdown at the end of a round
         private void makeCardsVisible()
         {
             Image playedCardImg;
-            for (int i = 1; i < 3; i++)
-                for (int j = 1; j <= 5; j++)
+            for (int i = 1; i <= game.NUM_OF_PLAYERS; i++)
+                for (int j = 1; j <= game.CARDS_PER_HAND; j++)
                 {
                     playedCardImg = FindName("p" + i.ToString() +
                         "card" + j.ToString()) as Image;
@@ -114,12 +107,10 @@ namespace poker
                     btn.Visibility = Visibility.Visible;
                 }
                 else
-                {
                     btn.Visibility = Visibility.Hidden;
-                }
             }
         }
-        
+
         private void setOpaqueCards()
         {
             int[] toSubCards = game.getCardsToSub();
@@ -143,8 +134,8 @@ namespace poker
             if (game.subsFinished())
             {
                 Image cardImg;
-                for (int i = 1; i < 3; i++)
-                    for (int j = 1; j <= 5; j++)
+                for (int i = 1; i <= game.NUM_OF_PLAYERS; i++)
+                    for (int j = 1; j <= game.CARDS_PER_HAND; j++)
                     {
                         cardImg = FindName("p" + i.ToString() +
                             "card" + j.ToString()) as Image;
@@ -162,9 +153,7 @@ namespace poker
                     btn.Visibility = Visibility.Visible;
                 }
                 else
-                {
                     btn.Visibility = Visibility.Hidden;
-                }
             }
             else
             {

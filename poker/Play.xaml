@@ -124,16 +124,6 @@
                Name="p2played"
                Source="{Binding P2_Played}" />
 
-        <Image Grid.Column="4"
-               Grid.Row="3"
-               Name="p3played"
-               Source="{Binding P3_Played}" />
-
-        <Image Grid.Column="2"
-               Grid.Row="3"
-               Name="p4played"
-               Source="{Binding P4_Played}" />
-        
         <Image Grid.Column="1"
                Grid.Row="0"
                Style="{StaticResource CardStyle}"
@@ -163,67 +153,7 @@
                Style="{StaticResource CardStyle}"
                Name="p2card5"
                Source="{Binding P2_Card5}" />
-        <!--
-        <Image Grid.Column="6"
-               Grid.Row="1"
-               Style="{StaticResource CardStyle}"
-               Name="p3card1"
-               Source="{Binding P3_Card1}"/>
-
-        <Image Grid.Column="6"
-               Grid.Row="2"
-               Style="{StaticResource CardStyle}"
-               Name="p3card2"
-               Source="{Binding P3_Card2}" />
-
-        <Image Grid.Column="6"
-               Grid.Row="3"
-               Style="{StaticResource CardStyle}"
-               Name="p3card3"
-               Source="{Binding P3_Card3}" />
-
-        <Image Grid.Column="6"
-               Grid.Row="4"
-               Style="{StaticResource CardStyle}"
-               Name="p3card4"
-               Source="{Binding P3_Card4}" />
-
-        <Image Grid.Column="6"
-               Grid.Row="5"
-               Style="{StaticResource CardStyle}"
-               Name="p3card5"
-               Source="{Binding P3_Card5}" />
-
-        <Image Grid.Column="0"
-               Grid.Row="1"
-               Style="{StaticResource CardStyle}"
-               Name="p4card1"
-               Source="{Binding P4_Card1}"/>
-
-        <Image Grid.Column="0"
-               Grid.Row="2"
-               Style="{StaticResource CardStyle}"
-               Name="p4card2"
-               Source="{Binding P4_Card2}" />
-
-        <Image Grid.Column="0"
-               Grid.Row="3"
-               Style="{StaticResource CardStyle}"
-               Name="p4card3"
-               Source="{Binding P4_Card3}" />
-
-        <Image Grid.Column="0"
-               Grid.Row="4"
-               Style="{StaticResource CardStyle}"
-               Name="p4card4"
-               Source="{Binding P4_Card4}" />
-
-        <Image Grid.Column="0"
-               Grid.Row="5"
-               Style="{StaticResource CardStyle}"
-               Name="p4card5"
-               Source="{Binding P4_Card5}" />
-        -->
+      
         <TextBlock Grid.Column="0"
                    Grid.Row="6"
                    Style="{StaticResource ScoreTextStyle}"
@@ -233,28 +163,5 @@
                    Grid.Row="0"
                    Style="{StaticResource ScoreTextStyle}"
                    Text="{Binding P2_Score}" />
-        <!--
-        <TextBlock Grid.Column="6"
-                   Grid.Row="0"
-                   HorizontalAlignment="Right"
-                   VerticalAlignment="Bottom"
-                   Style="{StaticResource ScoreTextStyle}"
-                   Text="{Binding P3_Score}" />
-
-        <TextBlock Grid.Column="0"
-                   Grid.Row="6"
-                   HorizontalAlignment="Left"
-                   VerticalAlignment="Top"
-                   Style="{StaticResource ScoreTextStyle}"
-                   Text="{Binding P4_Score}" />
-        -->
-        <!--
-        <Ellipse Grid.Column="3"
-                 Name="TurnIndicator"
-                 Width="5"
-                 Height="5"
-                 VerticalAlignment="Center"
-                 HorizontalAlignment="Center" />
-        -->
     </Grid>
 </Page>
