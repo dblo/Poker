@@ -42,6 +42,27 @@ namespace poker
             return cards[i];
         }
 
+        // Move cards in hands h1, h2 to front of deck array and set top to draw from rest
+        public void adjustDeck(Card[] h1, Card[] h2)
+        {
+            top = 0;
+            adjustForHand(h1);
+            adjustForHand(h2);
+        }
+
+        private void adjustForHand(Card[] hand)
+        {
+            foreach (Card card in hand)
+            {
+                int i = 0;
+                while (cards[i] != card)
+                    i++;
+
+                swap(top, i);
+                top++;
+            }
+        }
+
         // Returns 1 card
         public Card draw()
         {
@@ -55,14 +76,15 @@ namespace poker
             Card tmp;
             Random rng = new Random();
             for (int i=0; i < 1000; i++)
-            {
-                int swap1 = rng.Next(0, 51),
-                    swap2 = rng.Next(0, 51);
-                 tmp = cards[swap1];
-                 cards[swap1] = cards[swap2];
-                 cards[swap2] = tmp;
-            }
+                swap(rng.Next(0, 51), rng.Next(0, 51));
             top = 0;
+        }
+
+        private void swap(int c1, int c2)
+        {
+            Card tmp = cards[c1];
+            cards[c1] = cards[c2];
+            cards[c2] = tmp;
         }
     }
 }

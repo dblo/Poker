@@ -3,6 +3,8 @@ using poker;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Windows.Media.Imaging;
 
+// Testerna ej uppdaterade för lab 3!
+
 namespace pokerTest
 {
     [TestClass]
@@ -98,7 +100,7 @@ namespace pokerTest
         {
             resetEnvironment();
             game.playCard(1);
-            Assert.AreEqual(1, game.getPlayedCard(1));
+            Assert.AreEqual(1, game.getPlayedCard(game.PLAYER1));
         }
 
         [TestMethod]
@@ -114,13 +116,6 @@ namespace pokerTest
 
                 // Sleep to allow computer player to play before proceeding
                 System.Threading.Thread.Sleep(40);
-
-                // print hand for manual verification
-                //Console.WriteLine("Hand: " + game.P1_Card2.ToString().Substring(6, 3)
-                //                        + " " + game.P1_Card3.ToString().Substring(6, 3)
-                //                        + " " + game.P1_Card4.ToString().Substring(6, 3)
-                //                        + " " + game.P1_Card5.ToString().Substring(6, 3)
-                //                        + " vs " + game.P2_Played.ToString().Substring(6, 3));
 
                 char followThisSuit = game.P2_Played.ToString()[6];
                 if (game.P1_Card5.ToString()[6] != followThisSuit &

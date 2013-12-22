@@ -73,11 +73,18 @@ namespace poker
                     loadData(session);
                     notifyCardsChanged();
                     cardsToSub.Clear();
+                    if (onPlayer != firstPlayer)
+                        if (onPlayer == PLAYER1)
+                            followCard = p2Hand[playerPlayed[PLAYER2]];
+                        else
+                            followCard = p1Hand[playerPlayed[PLAYER1]];
 
-                    if (firstPlayer == PLAYER2)
-                    {
+                    if (!subsFinished())
+                        // Substitutions possible so prevent drawing card already drawn
+                        deck.adjustDeck(p1Hand, p2Hand);
+
+                    if (firstPlayer == PLAYER2 && onPlayer == PLAYER2)
                         stickRoundPauseTimer.Start();
-                    }
                 }
             }
         }
@@ -115,19 +122,19 @@ namespace poker
 
         private void setSaveData(GameSession session)
         {
-            session.id          = PLAYERID;
-            session.p1score     = P1_Score;
-            session.p2score     = P2_Score;
-            session.p1hand      = cardsToString(p1Hand);
-            session.p2hand      = cardsToString(p2Hand);
+            session.id = PLAYERID;
+            session.p1score = P1_Score;
+            session.p2score = P2_Score;
+            session.p1hand = cardsToString(p1Hand);
+            session.p2hand = cardsToString(p2Hand);
             session.p1remaining = cardsToString(p1RemainingCards);
             session.p2remaining = cardsToString(p2RemainingCards);
-            session.p1played    = playerPlayed[PLAYER1];
-            session.p2played    = playerPlayed[PLAYER2];
+            session.p1played = playerPlayed[PLAYER1];
+            session.p2played = playerPlayed[PLAYER2];
             session.first_player = firstPlayer;
-            session.on_player   = onPlayer;
+            session.on_player = onPlayer;
             session.stick_round = stickRound;
-            session.sub_round   = subRound;
+            session.sub_round = subRound;
         }
 
         private void loadData(GameSession session)
@@ -141,16 +148,16 @@ namespace poker
             playerPlayed[PLAYER1] = (int)session.p1played;
             playerPlayed[PLAYER2] = (int)session.p2played;
             firstPlayer = (int)session.first_player;
-            onPlayer    = (int)session.on_player;
-            stickRound  = (int)session.stick_round;
-            subRound    = (int)session.sub_round;
+            onPlayer = (int)session.on_player;
+            stickRound = (int)session.stick_round;
+            subRound = (int)session.sub_round;
         }
 
         // Set up card references in param cards for hand represented in param cardStr
         private void stringToCards(Card[] cards, string cardStr)
         {
             int begin = 0;
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < CARDS_PER_HAND; i++)
             {
                 if (cardStr[begin] == '-')
                 {
@@ -160,7 +167,7 @@ namespace poker
                 else
                 {
                     int len = 1;
-                    for (int j = begin + 1; j < cardStr.Length && 
+                    for (int j = begin + 1; j < cardStr.Length &&
                         !cardBeginnings.Contains(cardStr[j]); j++)
                         len++;
 
@@ -318,12 +325,11 @@ namespace poker
 
         private void showAllCompCards()
         {
-            for (int i = 2; i < 5; i++)
-                for (int j = 1; j <= 5; j++)
-                {
-                    string s = "P" + i.ToString() + "_Card" + j.ToString();
-                    OnPropertyChanged(s);
-                }
+            for (int j = 1; j <= CARDS_PER_HAND; j++)
+            {
+                string s = "P2_Card" + j.ToString();
+                OnPropertyChanged(s);
+            }
         }
 
         private int decideStickWinner()
@@ -367,6 +373,7 @@ namespace poker
 
             if (roundOver())
             {
+                // Flip comps cards over1
                 showAllCompCards();
                 int roundWinner = decideStickWinner();
                 awardRoundPoints(roundWinner);
@@ -462,8 +469,8 @@ namespace poker
         {
             get
             {
-                if (playerPlayed[0] >= 0)
-                    return getImage(p1Hand[playerPlayed[0]]);
+                if (playerPlayed[PLAYER1] > NONE)
+                    return getImage(p1Hand[playerPlayed[PLAYER1]]);
                 return null;
             }
         }
@@ -471,14 +478,14 @@ namespace poker
         {
             get
             {
-                if (playerPlayed[1] >= 0)
-                    return getImage(p2Hand[playerPlayed[1]]);
+                if (playerPlayed[PLAYER2] > NONE)
+                    return getImage(p2Hand[playerPlayed[PLAYER2]]);
                 return null;
             }
         }
         public int P1_Score
         {
-            get { return playerScore[0]; }
+            get { return playerScore[PLAYER1]; }
             set { playerScore[PLAYER1] = value; OnPropertyChanged("P1_Score"); }
         }
         public int P2_Score
